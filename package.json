@@ -1,0 +1,10 @@
+{
+  "name": "astute",
+  "version": "1.0.0",
+  "description": "ast-based syntax highlighting",
+  "main": "dist/index.js",
+  "repository": "https://github.com/rozzzly/astute.git",
+  "author": "rozzzly",
+  "license": "MIT",
+  "private": true
+}
