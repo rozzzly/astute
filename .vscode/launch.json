@@ -1,0 +1,29 @@
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "jest",
+            "request": "launch",
+            "runtimeArgs": [
+                "${workspaceRoot}/node_modules/jest/bin/jest.js",
+                "--run-in-band",
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {
+            "name": "run",
+            "request": "launch",
+            "runtimeArgs": [
+                "${workspaceRoot}/bin/index.js",
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        }
+    ]
+}
