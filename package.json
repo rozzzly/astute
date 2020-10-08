@@ -8,10 +8,13 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "build": "babel src --extensions \".ts,.js\" --out-dir bin --copy-files --no-copy-ignored",
         "test": "jest",
         "coverage": "jest --coverage",
-        "dev": "jest --watch"
+        "dev": "jest --watch",
+        "build:types": "tsc -p ./tsconfig.dist.json --emitDeclarationOnly",
+        "build:esm": "TARGET=esm babel src --out-dir bin/esm --extensions \".ts,.tsx\"",
+        "build:cjs": "TARGET=cjs babel src --out-dir bin/cjs --extensions \".ts,.tsx\"",
+        "dist": "node ./build-and-package.js"
     },
     "devDependencies": {
         "@babel/cli": "^7.12.8",

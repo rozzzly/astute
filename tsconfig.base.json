@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "ES2018",
+        "module": "ES2020",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "esModuleInterop": true,
+        "baseUrl": ".",
+        "outDir": "./bin",
+        "sourceMap": true,
+        "jsx": "preserve",
+        "lib": [
+            "ESNext",
+            "DOM"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "bin"
+    ]
+}
