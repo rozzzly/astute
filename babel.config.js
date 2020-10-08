@@ -1,21 +1,33 @@
+const envTarget = process.env['TARGET'];
+const TARGET = (envTarget && envTarget.toLowerCase() === 'esm') ? 'esm' : 'cjs';
+
 module.exports = {
+    sourceMaps: 'inline',
     presets: [
         [
             '@babel/preset-env',
-            {
+            (TARGET === 'esm') ? {
                 targets: {
-                    node: 'current',
-                    browsers: [
-                        'last 2 versions'
-                    ]
+                    esmodules: true,
+                    node: 'current'
                 },
-                modules: 'commonjs'
+                modules: false
+            } : {
+                modules: 'commonjs',
+                targets: {
+                    node: '8.9.0'
+                }
             }
         ],
         '@babel/preset-typescript'
     ],
     plugins: [
-        '@babel/plugin-transform-runtime',
+        [
+            '@babel/plugin-transform-runtime',
+            {
+                useESModules: TARGET === 'esm'
+            }
+        ],
         '@babel/plugin-proposal-class-properties'
     ]
 };
