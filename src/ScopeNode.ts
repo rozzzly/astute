@@ -5,6 +5,16 @@ export interface SlicedScopeNodeGroup {
     tail?: ScopeNode;
 }
 
+export interface ScopeNodeWalker {
+    skipChildren(): void;
+    skipSiblings(): void;
+    abort(): void;
+}
+
+export interface ScopeNodeVisitor {
+    (this: ScopeNodeWalker, node: ScopeNode, walker: ScopeNodeWalker): void;
+}
+
 export interface Range {
     start: number;
     end: number;
@@ -296,6 +306,38 @@ export class ScopeNode implements Range {
         } else {
             sliced.target.branch();
             return sliced.target;
+        }
+    }
+
+    walk(visitor: ScopeNodeVisitor, parentHandle?: ScopeNodeWalker): void {
+        let skippedChildren = false;
+        let skippedSiblings = false;
+        let aborted = false;
+
+        const handle = {
+            abort(): void {
+                aborted = true;
+                if (parentHandle) {
+                    parentHandle.abort();
+                }
+            },
+            skipChildren(): void {
+                skippedChildren = true;
+            },
+            skipSiblings(): void {
+                skippedSiblings = true;
+                if (parentHandle) {
+                    parentHandle.skipChildren();
+                }
+            }
+        };
+
+        visitor.call(handle, this, handle);
+        for (const child of this.children) {
+            if (aborted) break;
+            if (skippedSiblings) break;
+            if (skippedChildren) break;
+            child.walk(visitor, handle);
         }
     }
 
