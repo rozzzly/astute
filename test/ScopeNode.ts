@@ -123,7 +123,8 @@ test('Using .sliceAndBranch() to slice up children of the root node hierarchical
 
 test('Using .walk() to mark certain nodes what were sliced hierarchically sliced by .findSliceAndBranch()', () => {
     const src = new Source('one fish two fish red fish blue fish', 'test');
-    let match, fishRegExp = /(\S+)\s*(fish)/g;
+    const fishRegExp = /(\S+)\s*(fish)/g;
+    let match;
     while (match = fishRegExp.exec(src.text)) {
         src.sliceAndBranch(match.index, match.index + match[0].length).kind = 'phrase';
         src.slice(match.index, match.index + match[1].length).kind = 'adjective';
