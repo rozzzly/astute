@@ -47,6 +47,15 @@ export class ScopeNode implements Range {
         return this.children.length === 0;
     }
 
+    get depth(): number {
+        let currentNode: ScopeNode = this, depth = 0;
+        while(currentNode.parent) {
+            depth++;
+            currentNode = currentNode.parent;
+        }
+        return depth;
+    }
+
     get index(): number {
         if (!this.parent) {
             const e = new Error('this should never be called on the root node!');
