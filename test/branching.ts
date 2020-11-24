@@ -1,4 +1,7 @@
 import { test, expect } from '@jest/globals';
+import { stripIndent } from 'common-tags';
+
+import { markTags } from './_simple-tags';
 import Source from '../src/Source';
 
 test('.sliceAndBranch() throws with invalid or out of bounds ranges', () => {
@@ -77,5 +80,56 @@ test('Using .sliceAndBranch() to slice up children of root node hierarchically',
             ['', ' '],
             ['noun', 'fish']
         ]]
+    ]]);
+});
+
+test('using .findSliceAndBranch() to slice text into a complex scope tree', () => {
+    const src = new Source(stripIndent`
+        <foo><bar>double nested</bar></foo>
+        <foo>
+            <bar>multiple</bar>
+            <bar>children</bar>
+        </foo>
+    `, 'test');
+
+    markTags(src);
+    expect(src.serialize()).toEqual(['source.test', [
+        ['element.foo', [
+            ['tag.foo.open', '<foo>'],
+            ['element.foo.body', [
+                ['element.bar', [
+                    ['tag.bar.open', '<bar>'],
+                    ['element.bar.body', [
+                        ['', 'double nested']
+                    ]],
+                    ['tag.bar.close', '</bar>']
+                ]]
+            ]],
+            ['tag.foo.close', '</foo>']
+        ]],
+        ['', '\n'],
+        ['element.foo', [
+            ['tag.foo.open', '<foo>'],
+            ['element.foo.body', [
+                ['', '\n    '],
+                ['element.bar', [
+                    ['tag.bar.open', '<bar>'],
+                    ['element.bar.body', [
+                        ['', 'multiple']
+                    ]],
+                    ['tag.bar.close', '</bar>']
+                ]],
+                ['', '\n    '],
+                ['element.bar', [
+                    ['tag.bar.open', '<bar>'],
+                    ['element.bar.body', [
+                        ['', 'children']
+                    ]],
+                    ['tag.bar.close', '</bar>']
+                ]],
+                ['', '\n'],
+            ]],
+            ['tag.foo.close', '</foo>']
+        ]],
     ]]);
 });

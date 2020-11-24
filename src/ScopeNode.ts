@@ -5,6 +5,12 @@ export interface SlicedScopeNodeGroup {
     tail?: ScopeNode;
 }
 
+export interface SplitScopeNodeGroup {
+    head: ScopeNode[];
+    inner: ScopeNode;
+    tail: ScopeNode[];
+}
+
 export interface ScopeNodeWalker {
     skipChildren(): void;
     skipSiblings(): void;
@@ -316,6 +322,108 @@ export class ScopeNode implements Range {
             sliced.target.branch();
             return sliced.target;
         }
+    }
+
+    split(start: number, end: number): SplitScopeNodeGroup {
+        const result: SplitScopeNodeGroup = {
+            head: [],
+            tail: [],
+            inner: null
+        } as any;
+        /// [ get left/right siblings that have not been modified ] /////////////////////
+        let left = this.prevSibling, right = this.nextSibling;
+        if (left) {
+            do {
+                result.head.unshift(left);
+            } while (left = left.prevSibling);
+        }
+        if (right) {
+            do {
+                result.tail.push(right);
+            } while (right = right.nextSibling);
+        }
+
+        if (!this.parent) {
+            const splitNode = this.locate(start, end, false);
+            const { head, tail, inner } = splitNode.split(start, end);
+            result.inner = inner;
+            inner.parent = null;
+            this.children = [
+                ...head,
+                inner,
+                ...tail
+            ];
+            for (let i = 0; i < this.children.length; i++) {
+                const current = this.children[i];
+                if (i > 0) current.#prev = this.children[i - 1] ;
+                else current.#prev = null;
+                if (i < this.children.length - 1) current.#next = this.children[i + 1];
+                else current.#next = null;
+            }
+        } else {
+            if (this.isTerminal) {
+                if (this.start === start && this.end === end) {
+                    result.inner = this;
+                } else {
+                    const sliced = this.slice(start, end, true);
+                    if (!sliced.target) {
+                        throw new Error('zero-width slice prohibited here');
+                    }
+                    result.inner = sliced.target;
+                    if (sliced.head) {
+                        sliced.head.#next = null;
+                        result.head.push(sliced.head);
+                    }
+                    if (sliced.tail) {
+                        sliced.tail.#prev = null;
+                        result.tail.unshift(sliced.tail);
+                    }
+                }
+            } else {
+                const splitNode = this.locate(start, end, false);
+                const { head, tail, inner: target } = splitNode.split(start, end);
+                result.inner = target;
+
+                if (head.length) {
+                    const text = [];
+                    const concat = this.clone();
+                    for (let i = 0; i < head.length; i++) {
+                        const current = head[i];
+                        if (i > 0) current.#prev = head[i - 1] ;
+                        else current.#prev = null;
+                        if (i < head.length - 1) current.#next = head[i + 1];
+                        else current.#next = null;
+                        text.push(current.text);
+                        concat.children.push(current);
+                        current.parent = concat;
+                    }
+                    concat.start = head[0].start;
+                    concat.end = head[head.length - 1].end;
+                    concat.text = text.join('');
+                    result.head.push(concat);
+                }
+                if (tail.length) {
+                    const text = [];
+                    const concat = this.clone();
+                    for (let i = 0; i < tail.length; i++) {
+                        const current = tail[i];
+                        if (i > 0) current.#prev = tail[i - 1];
+                        else current.#prev = null;
+                        if (i < tail.length - 1) current.#next = tail[i + 1];
+                        else current.#next = null;
+                        text.push(current.text);
+                        concat.children.push(current);
+                        current.parent = concat;
+                    }
+                    concat.start = tail[0].start;
+                    concat.end = tail[tail.length - 1].end;
+                    concat.text = text.join('');
+                    result.tail.unshift(concat);
+                }
+            }
+        }
+
+        return result;
     }
 
     walk(visitor: ScopeNodeVisitor, parentHandle?: ScopeNodeWalker): void {
