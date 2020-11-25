@@ -4,6 +4,7 @@ import { stripIndent } from 'common-tags';
 import { markTags } from './_simple-tags';
 import Source from '../src/Source';
 
+
 test('.sliceAndBranch() throws with invalid or out of bounds ranges', () => {
     const src = new Source('foobar', 'test');
     expect(() => src.sliceAndBranch(3, 1)).toThrow();
@@ -11,7 +12,7 @@ test('.sliceAndBranch() throws with invalid or out of bounds ranges', () => {
     expect(() => src.sliceAndBranch(-1, 1)).toThrow();
 });
 
-test(`children created with .findSliceAndBranch() do not inherit their 'kind' from their parent`, () => {
+test(`children created with .sliceAndBranch() do not inherit their 'kind' from their parent`, () => {
     const src = new Source('one fish two fish red fish blue fish', 'test');
     const fishRegExp = /(\S+)\s*(fish)/g;
     let match;
@@ -23,8 +24,6 @@ test(`children created with .findSliceAndBranch() do not inherit their 'kind' fr
 
     while (match = fishRegExp.exec(src.text)) {
         src.sliceAndBranch(match.index, match.index + match[0].length);
-        // src.slice(match.index, match.index + match[1].length);
-        // src.slice(match.index + match[0].length - match[2].length, match.index + match[0].length)
     }
 
     expect(src.serialize()).toEqual(['source.test', [
@@ -83,7 +82,7 @@ test('Using .sliceAndBranch() to slice up children of root node hierarchically',
     ]]);
 });
 
-test('using .findSliceAndBranch() to slice text into a complex scope tree', () => {
+test('using .sliceAndBranch() to slice text into a complex scope tree', () => {
     const src = new Source(stripIndent`
         <foo><bar>double nested</bar></foo>
         <foo>
