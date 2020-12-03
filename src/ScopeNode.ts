@@ -21,14 +21,14 @@ export interface ScopeNodeVisitor {
     (this: ScopeNodeWalker, node: ScopeNode, walker: ScopeNodeWalker): void;
 }
 
-export interface Range {
+export interface Ranged {
     start: number;
     end: number;
 }
 
 export type SerializedScopeNode = [kind: string, children: string | Array<SerializedScopeNode>];
 
-export class ScopeNode implements Range {
+export class ScopeNode implements Ranged {
     start: number;
     end: number;
     kind: string;
@@ -122,8 +122,8 @@ export class ScopeNode implements Range {
         return new ScopeNode('', this.text.slice(relStart, relEnd), start, end, this);
     }
 
-    locate<R extends Range>(range: R): ScopeNode
-    locate<R extends Range>(range: R, deepSearch: boolean): ScopeNode;
+    locate<R extends Ranged>(range: R): ScopeNode
+    locate<R extends Ranged>(range: R, deepSearch: boolean): ScopeNode;
     locate(start: number, end: number): ScopeNode;
     locate(start: number, end: number, deepSearch: boolean): ScopeNode;
     locate(...args: any[]): ScopeNode {
@@ -165,10 +165,10 @@ export class ScopeNode implements Range {
         return deepSearch ? cNode.locate(start, end) : cNode;
     }
 
-    slice<R extends Range>(range: R): ScopeNode;
-    slice<R extends Range>(range: R, includeAdjacent: false): SlicedScopeNodeGroup;
-    slice<R extends Range>(range: R, includeAdjacent: true): SlicedScopeNodeGroup;
-    slice<R extends Range>(range: R, includeAdjacent?: boolean): ScopeNode | SlicedScopeNodeGroup;
+    slice<R extends Ranged>(range: R): ScopeNode;
+    slice<R extends Ranged>(range: R, includeAdjacent: false): SlicedScopeNodeGroup;
+    slice<R extends Ranged>(range: R, includeAdjacent: true): SlicedScopeNodeGroup;
+    slice<R extends Ranged>(range: R, includeAdjacent?: boolean): ScopeNode | SlicedScopeNodeGroup;
     slice(start: number, end: number): ScopeNode;
     slice(start: number, end: number, includeAdjacent: false): ScopeNode;
     slice(start: number, end: number, includeAdjacent: true): SlicedScopeNodeGroup;
@@ -297,10 +297,10 @@ export class ScopeNode implements Range {
         return spawned;
     }
 
-    sliceAndBranch<R extends Range>(range: R): ScopeNode;
-    sliceAndBranch<R extends Range>(range: R, includeAdjacent: false): SlicedScopeNodeGroup;
-    sliceAndBranch<R extends Range>(range: R, includeAdjacent: true): SlicedScopeNodeGroup;
-    sliceAndBranch<R extends Range>(range: R, includeAdjacent?: boolean): ScopeNode | SlicedScopeNodeGroup;
+    sliceAndBranch<R extends Ranged>(range: R): ScopeNode;
+    sliceAndBranch<R extends Ranged>(range: R, includeAdjacent: false): SlicedScopeNodeGroup;
+    sliceAndBranch<R extends Ranged>(range: R, includeAdjacent: true): SlicedScopeNodeGroup;
+    sliceAndBranch<R extends Ranged>(range: R, includeAdjacent?: boolean): ScopeNode | SlicedScopeNodeGroup;
     sliceAndBranch(start: number, end: number): ScopeNode;
     sliceAndBranch(start: number, end: number, includeAdjacent: false): ScopeNode;
     sliceAndBranch(start: number, end: number, includeAdjacent: true): SlicedScopeNodeGroup;
