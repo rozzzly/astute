@@ -1,6 +1,7 @@
 module.exports = {
     testEnvironment: 'node',
     testRunner: 'jest-circus/runner',
+    snapshotResolver: '<rootDir>/test/_helpers/snapshotResolver.js',
     injectGlobals: false,
     verbose: true,
     testRegex: [
