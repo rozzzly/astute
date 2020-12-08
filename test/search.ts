@@ -205,3 +205,43 @@ test(oneLine`
         ]]
     ]]);
 });
+
+test(`using a .walk() visitor's walker.collect() to filter out a subset of ScopeNodes`, () => {
+    const src = new Source('one fish two fish red fish blue fish', 'test');
+    const fishRegExp = /(\S+)\s*(fish)/g;
+    let match;
+    while (match = fishRegExp.exec(src.text)) {
+        src.sliceAndBranch(match.index, match.index + match[0].length).kind = 'phrase';
+        src.slice(match.index, match.index + match[1].length).kind = 'adjective';
+        src.slice(match.index + match[0].length - match[2].length, match.index + match[0].length).kind = 'noun';
+    }
+    const selected = src.walk((node, handle) => node.text.match(/[aeiou]$/i) && handle.collect());
+
+    expect(selected.map(node => node.text)).toEqual([
+        'one', 'two', 'blue'
+    ]);
+});
+
+test(`a .walk() visitor's walker.collect() collects subnodes depth-first`, () => {
+    const src = new Source('one fish-0 two fish-1 red fish-2 blue fish-3', 'test');
+    const fishRegExp = /(\S+)\s*(fish-\d)/g;
+    let match;
+    while (match = fishRegExp.exec(src.text)) {
+        src.sliceAndBranch(match.index, match.index + match[0].length).kind = 'phrase';
+        src.slice(match.index, match.index + match[1].length).kind = 'adjective';
+        src.slice(match.index + match[0].length - match[2].length, match.index + match[0].length).kind = 'noun';
+    }
+    const selected = src.walk((node, handle) => node.text.includes('fish') && handle.collect());
+
+    expect(selected.map(node => node.text)).toEqual([
+        'one fish-0 two fish-1 red fish-2 blue fish-3',
+        'one fish-0',
+        'fish-0',
+        'two fish-1',
+        'fish-1',
+        'red fish-2',
+        'fish-2',
+        'blue fish-3',
+        'fish-3'
+    ]);
+});

@@ -14,6 +14,7 @@ export interface SplitScopeNodeGroup {
 export interface ScopeNodeWalker {
     skipChildren(): void;
     skipSiblings(): void;
+    collect(): void;
     abort(): void;
 }
 
@@ -426,10 +427,11 @@ export class ScopeNode implements Ranged {
         return result;
     }
 
-    walk(visitor: ScopeNodeVisitor, parentHandle?: ScopeNodeWalker): void {
+    walk(visitor: ScopeNodeVisitor, parentHandle?: ScopeNodeWalker): ScopeNode[] {
         let skippedChildren = false;
         let skippedSiblings = false;
         let aborted = false;
+        const collected: ScopeNode[] = [];
 
         const handle = {
             abort(): void {
@@ -437,6 +439,11 @@ export class ScopeNode implements Ranged {
                 if (parentHandle) {
                     parentHandle.abort();
                 }
+            },
+            collect: () => {
+                // intentionally using an ArrowFunction instead of an ObjectMethod here to ensure
+                // that within the following closure,`this` says bound to `ScopeNode`
+                collected.push(this);
             },
             skipChildren(): void {
                 skippedChildren = true;
@@ -454,8 +461,10 @@ export class ScopeNode implements Ranged {
             if (aborted) break;
             if (skippedSiblings) break;
             if (skippedChildren) break;
-            child.walk(visitor, handle);
+            collected.push(...child.walk(visitor, handle));
         }
+
+        return collected;
     }
 
     serialize(): SerializedScopeNode {
