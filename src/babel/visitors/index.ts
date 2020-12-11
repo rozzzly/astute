@@ -1,13 +1,15 @@
 import { TraverseOptions } from '@babel/traverse';
 import BabelSource from '../BabelSource';
-import createPrimitiveVisitors from './primitives';
+import primitiveVisitors from './primitives';
+import operatorVisitors from './operators';
 
 export function createVisitors(this: BabelSource): TraverseOptions {
     return [
-        createPrimitiveVisitors
-    ].reduce((reduction, visitorCreator) => ({
+        primitiveVisitors,
+        operatorVisitors
+    ].reduce((reduction, visitor) => ({
         ...reduction,
-        ...(visitorCreator.call(this))
+        ...(visitor.call(this)),
     }), { });
 }
 export default createVisitors;
