@@ -15,7 +15,7 @@ declare module '@babel/types' {
 }
 
 
-export default function createPrimitiveVisitors(this: BabelSource): TraverseOptions {
+export default function primitiveVisitors(this: BabelSource): TraverseOptions {
     return {
         StringLiteral: ({ node }) => {
             castAsRanged(node);

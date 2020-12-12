@@ -2,7 +2,7 @@ import { TraverseOptions } from '@babel/traverse';
 import { castAsRanged } from '../../utils';
 import BabelSource from '../BabelSource';
 
-export default function createPrimitiveVisitors(this: BabelSource): TraverseOptions {
+export default function operatorVisitors(this: BabelSource): TraverseOptions {
     return {
         UnaryExpression: ({ node }) => {
             castAsRanged(node);
