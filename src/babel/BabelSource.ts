@@ -52,7 +52,6 @@ const defaultBabelOpts: ParserOptions = {
         'optionalChaining'
     ],
     tokens: true,
-
     createParenthesizedExpressions: true
 };
 
