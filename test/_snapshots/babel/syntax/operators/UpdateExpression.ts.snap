@@ -1,121 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`decrement a variable (with postfix operator: x--) 1`] = `
-Array [
-  "source.ts",
-  Array [
-    Array [
-      "",
-      "let x = ",
-    ],
-    Array [
-      "constant.numeric.decimal",
-      "0",
-    ],
-    Array [
-      "",
-      ";
-x",
-    ],
-    Array [
-      "keyword.operator.decrement",
-      "--",
-    ],
-    Array [
-      "",
-      ";
-",
-    ],
-  ],
+['source.ts', [
+    ['', 'let x = '],
+    ['constant.numeric.decimal', '0'],
+    ['', ';\\nx'],
+    ['keyword.operator.decrement', '--'],
+    ['', ';\\n']
 ]
+
 `;
 
 exports[`decrement a variable (with prefix operator: --x) 1`] = `
-Array [
-  "source.ts",
-  Array [
-    Array [
-      "",
-      "let x = ",
-    ],
-    Array [
-      "constant.numeric.decimal",
-      "0",
-    ],
-    Array [
-      "",
-      ";
-",
-    ],
-    Array [
-      "keyword.operator.decrement",
-      "--",
-    ],
-    Array [
-      "",
-      "x;
-",
-    ],
-  ],
+['source.ts', [
+    ['', 'let x = '],
+    ['constant.numeric.decimal', '0'],
+    ['', ';\\n'],
+    ['keyword.operator.decrement', '--'],
+    ['', 'x;\\n']
 ]
+
 `;
 
 exports[`increment a variable (with postfix operator: x++) 1`] = `
-Array [
-  "source.ts",
-  Array [
-    Array [
-      "",
-      "let x = ",
-    ],
-    Array [
-      "constant.numeric.decimal",
-      "0",
-    ],
-    Array [
-      "",
-      ";
-x",
-    ],
-    Array [
-      "keyword.operator.increment",
-      "++",
-    ],
-    Array [
-      "",
-      ";
-",
-    ],
-  ],
+['source.ts', [
+    ['', 'let x = '],
+    ['constant.numeric.decimal', '0'],
+    ['', ';\\nx'],
+    ['keyword.operator.increment', '++'],
+    ['', ';\\n']
 ]
+
 `;
 
 exports[`increment a variable (with prefix operator: ++x) 1`] = `
-Array [
-  "source.ts",
-  Array [
-    Array [
-      "",
-      "let x = ",
-    ],
-    Array [
-      "constant.numeric.decimal",
-      "0",
-    ],
-    Array [
-      "",
-      ";
-",
-    ],
-    Array [
-      "keyword.operator.increment",
-      "++",
-    ],
-    Array [
-      "",
-      "x;
-",
-    ],
-  ],
+['source.ts', [
+    ['', 'let x = '],
+    ['constant.numeric.decimal', '0'],
+    ['', ';\\n'],
+    ['keyword.operator.increment', '++'],
+    ['', 'x;\\n']
 ]
+
 `;
