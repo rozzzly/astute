@@ -1,9 +1,69 @@
 import { TraverseOptions } from '@babel/traverse';
+import { oneLine } from 'common-tags';
 import { castAsRanged } from '../../utils';
 import BabelSource from '../BabelSource';
 
+const binaryOperatorTokens = [
+    '+' , '-' , '/' , '%' , '*' , '**' , '&' , ',' ,
+    '>>' , '>>>' , '<<' , '^' , '==' , '===' , '!=' ,
+    '!==' , 'in' , 'instanceof' , '>' , '<' , '>=' , '<='
+];
+
 export default function operatorVisitors(this: BabelSource): TraverseOptions {
     return {
+        BinaryExpression: path => {
+            const { node } = path;
+            castAsRanged(node);
+
+            let kind = '';
+            switch (node.operator) {
+                case '+':
+                case '-':
+                case '**':
+                case '/':
+                case '%':
+                    kind = 'keyword.operator.arithmetic';
+                    break;
+                case '<<':
+                case '>>':
+                case '>>>':
+                    kind = 'keyword.operator.bitwise.shift';
+                    break;
+                case 'in':
+                    kind = 'keyword.operator.expression.in';
+                    break;
+                case 'instanceof':
+                    kind = 'keyword.operator.expression.instanceof';
+                    break;
+                case '&':
+                case '|':
+                case '^':
+                    kind = 'keyword.operator.bitwise';
+                    break;
+                case '!=':
+                case '==':
+                case '!==':
+                case '===':
+                    kind =  'keyword.operator.comparison';
+                    break;
+                case '>':
+                case '<':
+                case '>=':
+                case '<=':
+                    kind =  'keyword.operator.comparison';
+                    break;
+            }
+            castAsRanged(node.left);
+            castAsRanged(node.right);
+            const [ token ] = this.findBabelTokens(node.left.end, node.right.start);
+            if (!token || !binaryOperatorTokens.includes(token.value)) {
+                throw new Error(oneLine`
+                    Expected to find a binary operator token between .left and .right
+                `);
+            } else {
+                this.slice(token).kind = kind;
+            }
+        },
         UnaryExpression: ({ node }) => {
             castAsRanged(node);
             let kind = '';
@@ -30,7 +90,8 @@ export default function operatorVisitors(this: BabelSource): TraverseOptions {
                     kind = 'keyword.operator.expression.void';
                     break;
                 default:
-                    throw new Error(`Unhandled UnaryExpression operator: '${node.operator}'`);
+                    this.warn(`Unhandled UnaryExpression operator: '${node.operator}'`, { node });
+                    break;
             }
             this.slice(node).kind = kind;
         },
@@ -51,7 +112,7 @@ export default function operatorVisitors(this: BabelSource): TraverseOptions {
             // an example of why: `(foo.bar[++i])++` is a valid `UpdateExpression`. When this visitor reaches
             // the outer `UpdateExpression`, the `reverse` parameter makes it possible to grab just the outer token,
             // not just the one that occurs first.
-            const [token] = this.findBabelTokens(node, bToken => bToken.value === node.operator, 1, !node.prefix);
+            const [ token ] = this.findBabelTokens(node, bToken => bToken.value === node.operator, 1, !node.prefix);
             this.slice(token).kind = kind;
         }
     };

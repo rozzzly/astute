@@ -56,7 +56,7 @@ export class ScopeNode implements Ranged {
 
     get depth(): number {
         let currentNode: ScopeNode = this, depth = 0;
-        while(currentNode.parent) {
+        while (currentNode.parent) {
             depth++;
             currentNode = currentNode.parent;
         }
@@ -161,7 +161,7 @@ export class ScopeNode implements Ranged {
             } else if (cNode.end <= start) { // cNode ends too early, more cursor right
                 low = mid + 1;
             }
-        } while(cNode.start > start || cNode.end <= start);
+        } while (cNode.start > start || cNode.end <= start);
 
         return deepSearch ? cNode.locate(start, end) : cNode;
     }

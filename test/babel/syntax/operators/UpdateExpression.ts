@@ -12,7 +12,8 @@ test('increment a variable (with prefix operator: ++x)', () => {
     expect(src.serialize()).toMatchSnapshot();
     expect(src.breakLines()[1].map(n => n.serialize())).toEqual([
         ['keyword.operator.increment', '++'],
-        ['', 'x;']
+        ['variable.other.readwrite', 'x'],
+        ['', ';']
     ]);
 });
 
@@ -24,7 +25,7 @@ test('increment a variable (with postfix operator: x++)', () => {
     src.tokenize();
     expect(src.serialize()).toMatchSnapshot();
     expect(src.breakLines()[1].map(n => n.serialize())).toEqual([
-        ['', 'x'],
+        ['variable.other.readwrite', 'x'],
         ['keyword.operator.increment', '++'],
         ['', ';']
     ]);
@@ -39,7 +40,8 @@ test('decrement a variable (with prefix operator: --x)', () => {
     expect(src.serialize()).toMatchSnapshot();
     expect(src.breakLines()[1].map(n => n.serialize())).toEqual([
         ['keyword.operator.decrement', '--'],
-        ['', 'x;']
+        ['variable.other.readwrite', 'x'],
+        ['', ';']
     ]);
 });
 
@@ -51,7 +53,7 @@ test('decrement a variable (with postfix operator: x--)', () => {
     src.tokenize();
     expect(src.serialize()).toMatchSnapshot();
     expect(src.breakLines()[1].map(n => n.serialize())).toEqual([
-        ['', 'x'],
+        ['variable.other.readwrite', 'x'],
         ['keyword.operator.decrement', '--'],
         ['', ';']
     ]);

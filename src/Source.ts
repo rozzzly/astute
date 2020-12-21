@@ -2,16 +2,28 @@ import { ScopeNode } from './ScopeNode';
 
 const linebreakRegExp = /\r?\n/g;
 
+type SourceWarning = [string, object];
+
 export class Source<SourceLang extends string = string> extends ScopeNode {
 
     sourceLang : SourceLang;
+    warnings: SourceWarning[];
 
     constructor(text: string, sourceLang: SourceLang) {
         super(`source.${sourceLang}`, text, 0, text.length, null);
         this.sourceLang = sourceLang;
+        this.warnings = [];
         this.children = [
             new ScopeNode('', this.text, 0, this.text.length, this)
         ];
+    }
+
+    tokenize() {
+        this.warnings = [];
+    }
+
+    warn(message: string, meta: object = {}): void {
+        this.warnings.push([ message, meta ]);
     }
 
     breakLines(): ScopeNode[][] {

@@ -44,6 +44,14 @@ export default function miscVisitors(this: BabelSource): TraverseOptions {
                     } // otherwise this is an Identifier and will be handled by that Visitor
                 }
             }
+        },
+        RestElement: path => {
+            castAsRanged(path.node);
+            const { node } = path;
+            const [ restToken ] = this.findBabelTokens(node.start, node.end, bToken => (
+                bToken.type.label === '...'
+            ), 1);
+            this.slice(restToken).kind = 'keyword.operator.rest';
         }
     };
 }
