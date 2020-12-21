@@ -39,6 +39,9 @@ module.exports = {
             'error',
             'always'
         ],
+        'keyword-spacing': [
+            'error'
+        ],
         'key-spacing': [
             'error'
         ],
@@ -60,6 +63,8 @@ module.exports = {
         '@typescript-eslint/no-empty-function': 'off',
         'no-unused-vars': 'off',
         '@typescript-eslint/no-unused-vars': 'off',
-        '@typescript-eslint/explicit-module-boundary-types': 'off'
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
+        '@typescript-eslint/no-this-alias': 'off'
     }
 };
