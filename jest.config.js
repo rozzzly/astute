@@ -1,6 +1,10 @@
 module.exports = {
     testEnvironment: 'node',
     testRunner: 'jest-circus/runner',
+    snapshotSerializers: [
+        '<rootDir>/test/_helpers/scopeNodeSerializer.js'
+    ],
+    snapshotResolver: '<rootDir>/test/_helpers/snapshotResolver.js',
     injectGlobals: false,
     verbose: true,
     testRegex: [
