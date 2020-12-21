@@ -50,7 +50,7 @@ export default function operatorVisitors(this: BabelSource): TraverseOptions {
             // TODO use of `!node.prefix` here for the `reverse` parameter is very important:
             // an example of why: `(foo.bar[++i])++` is a valid `UpdateExpression`. When this visitor reaches
             // the outer `UpdateExpression`, the `reverse` parameter makes it possible to grab just the outer token,
-            // not just the one that occurs first
+            // not just the one that occurs first.
             const [token] = this.findBabelTokens(node, bToken => bToken.value === node.operator, 1, !node.prefix);
             this.slice(token).kind = kind;
         }
