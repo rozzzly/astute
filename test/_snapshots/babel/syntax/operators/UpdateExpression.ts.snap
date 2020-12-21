@@ -2,9 +2,12 @@
 
 exports[`decrement a variable (with postfix operator: x--) 1`] = `
 ['source.ts', [
-    ['', 'let x = '],
+    ['', 'let '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
     ['constant.numeric.decimal', '0'],
-    ['', ';\\nx'],
+    ['', ';\\n'],
+    ['variable.other.readwrite', 'x'],
     ['keyword.operator.decrement', '--'],
     ['', ';\\n']
 ]
@@ -13,20 +16,26 @@ exports[`decrement a variable (with postfix operator: x--) 1`] = `
 
 exports[`decrement a variable (with prefix operator: --x) 1`] = `
 ['source.ts', [
-    ['', 'let x = '],
+    ['', 'let '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
     ['constant.numeric.decimal', '0'],
     ['', ';\\n'],
     ['keyword.operator.decrement', '--'],
-    ['', 'x;\\n']
+    ['variable.other.readwrite', 'x'],
+    ['', ';\\n']
 ]
 
 `;
 
 exports[`increment a variable (with postfix operator: x++) 1`] = `
 ['source.ts', [
-    ['', 'let x = '],
+    ['', 'let '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
     ['constant.numeric.decimal', '0'],
-    ['', ';\\nx'],
+    ['', ';\\n'],
+    ['variable.other.readwrite', 'x'],
     ['keyword.operator.increment', '++'],
     ['', ';\\n']
 ]
@@ -35,11 +44,14 @@ exports[`increment a variable (with postfix operator: x++) 1`] = `
 
 exports[`increment a variable (with prefix operator: ++x) 1`] = `
 ['source.ts', [
-    ['', 'let x = '],
+    ['', 'let '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
     ['constant.numeric.decimal', '0'],
     ['', ';\\n'],
     ['keyword.operator.increment', '++'],
-    ['', 'x;\\n']
+    ['variable.other.readwrite', 'x'],
+    ['', ';\\n']
 ]
 
 `;
