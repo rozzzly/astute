@@ -14,6 +14,7 @@ export interface SplitScopeNodeGroup {
 export interface ScopeNodeWalker {
     skipChildren(): void;
     skipSiblings(): void;
+    collect(): void;
     abort(): void;
 }
 
@@ -21,14 +22,14 @@ export interface ScopeNodeVisitor {
     (this: ScopeNodeWalker, node: ScopeNode, walker: ScopeNodeWalker): void;
 }
 
-export interface Range {
+export interface Ranged {
     start: number;
     end: number;
 }
 
 export type SerializedScopeNode = [kind: string, children: string | Array<SerializedScopeNode>];
 
-export class ScopeNode implements Range {
+export class ScopeNode implements Ranged {
     start: number;
     end: number;
     kind: string;
@@ -55,7 +56,7 @@ export class ScopeNode implements Range {
 
     get depth(): number {
         let currentNode: ScopeNode = this, depth = 0;
-        while(currentNode.parent) {
+        while (currentNode.parent) {
             depth++;
             currentNode = currentNode.parent;
         }
@@ -122,8 +123,8 @@ export class ScopeNode implements Range {
         return new ScopeNode('', this.text.slice(relStart, relEnd), start, end, this);
     }
 
-    locate<R extends Range>(range: R): ScopeNode
-    locate<R extends Range>(range: R, deepSearch: boolean): ScopeNode;
+    locate<R extends Ranged>(range: R): ScopeNode
+    locate<R extends Ranged>(range: R, deepSearch: boolean): ScopeNode;
     locate(start: number, end: number): ScopeNode;
     locate(start: number, end: number, deepSearch: boolean): ScopeNode;
     locate(...args: any[]): ScopeNode {
@@ -160,15 +161,15 @@ export class ScopeNode implements Range {
             } else if (cNode.end <= start) { // cNode ends too early, more cursor right
                 low = mid + 1;
             }
-        } while(cNode.start > start || cNode.end <= start);
+        } while (cNode.start > start || cNode.end <= start);
 
         return deepSearch ? cNode.locate(start, end) : cNode;
     }
 
-    slice<R extends Range>(range: R): ScopeNode;
-    slice<R extends Range>(range: R, includeAdjacent: false): SlicedScopeNodeGroup;
-    slice<R extends Range>(range: R, includeAdjacent: true): SlicedScopeNodeGroup;
-    slice<R extends Range>(range: R, includeAdjacent?: boolean): ScopeNode | SlicedScopeNodeGroup;
+    slice<R extends Ranged>(range: R): ScopeNode;
+    slice<R extends Ranged>(range: R, includeAdjacent: false): SlicedScopeNodeGroup;
+    slice<R extends Ranged>(range: R, includeAdjacent: true): SlicedScopeNodeGroup;
+    slice<R extends Ranged>(range: R, includeAdjacent?: boolean): ScopeNode | SlicedScopeNodeGroup;
     slice(start: number, end: number): ScopeNode;
     slice(start: number, end: number, includeAdjacent: false): ScopeNode;
     slice(start: number, end: number, includeAdjacent: true): SlicedScopeNodeGroup;
@@ -297,10 +298,10 @@ export class ScopeNode implements Range {
         return spawned;
     }
 
-    sliceAndBranch<R extends Range>(range: R): ScopeNode;
-    sliceAndBranch<R extends Range>(range: R, includeAdjacent: false): SlicedScopeNodeGroup;
-    sliceAndBranch<R extends Range>(range: R, includeAdjacent: true): SlicedScopeNodeGroup;
-    sliceAndBranch<R extends Range>(range: R, includeAdjacent?: boolean): ScopeNode | SlicedScopeNodeGroup;
+    sliceAndBranch<R extends Ranged>(range: R): ScopeNode;
+    sliceAndBranch<R extends Ranged>(range: R, includeAdjacent: false): SlicedScopeNodeGroup;
+    sliceAndBranch<R extends Ranged>(range: R, includeAdjacent: true): SlicedScopeNodeGroup;
+    sliceAndBranch<R extends Ranged>(range: R, includeAdjacent?: boolean): ScopeNode | SlicedScopeNodeGroup;
     sliceAndBranch(start: number, end: number): ScopeNode;
     sliceAndBranch(start: number, end: number, includeAdjacent: false): ScopeNode;
     sliceAndBranch(start: number, end: number, includeAdjacent: true): SlicedScopeNodeGroup;
@@ -426,10 +427,11 @@ export class ScopeNode implements Range {
         return result;
     }
 
-    walk(visitor: ScopeNodeVisitor, parentHandle?: ScopeNodeWalker): void {
+    walk(visitor: ScopeNodeVisitor, parentHandle?: ScopeNodeWalker): ScopeNode[] {
         let skippedChildren = false;
         let skippedSiblings = false;
         let aborted = false;
+        const collected: ScopeNode[] = [];
 
         const handle = {
             abort(): void {
@@ -437,6 +439,11 @@ export class ScopeNode implements Range {
                 if (parentHandle) {
                     parentHandle.abort();
                 }
+            },
+            collect: () => {
+                // intentionally using an ArrowFunction instead of an ObjectMethod here to ensure
+                // that within the following closure,`this` says bound to `ScopeNode`
+                collected.push(this);
             },
             skipChildren(): void {
                 skippedChildren = true;
@@ -454,8 +461,10 @@ export class ScopeNode implements Range {
             if (aborted) break;
             if (skippedSiblings) break;
             if (skippedChildren) break;
-            child.walk(visitor, handle);
+            collected.push(...child.walk(visitor, handle));
         }
+
+        return collected;
     }
 
     serialize(): SerializedScopeNode {

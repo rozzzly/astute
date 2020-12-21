@@ -130,5 +130,6 @@ test('using .sliceAndBranch() to slice text into a complex scope tree', () => {
             ]],
             ['tag.foo.close', '</foo>']
         ]],
+        ['', '\n']
     ]]);
 });
