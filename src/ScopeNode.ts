@@ -18,8 +18,35 @@ export interface ScopeNodeWalker {
     abort(): void;
 }
 
+export interface ScopeNodeWalkerInternal extends ScopeNodeWalker {
+    collected: ScopeNode[];
+    breadthFirstInitialPass: boolean;
+}
+
+export interface ScopeNodeWalkOptions {
+    limit?: number;
+    reverse?: boolean;
+    strategy?: 'depthFirst' | 'breadthFirst'
+}
+
+const defaultScopeNodeWalkOptions: Required<ScopeNodeWalkOptions> = {
+    limit: -1,
+    reverse: false,
+    strategy: 'depthFirst'
+};
+
+export type ScopeNodeSearchPredicate = (
+    | {
+        (this: ScopeNodeWalker, node: ScopeNode, walker: ScopeNodeWalker): boolean;
+    } | {
+        text: string | RegExp;
+    } | {
+        kind: string | RegExp;
+    }
+);
+
 export interface ScopeNodeVisitor {
-    (this: ScopeNodeWalker, node: ScopeNode, walker: ScopeNodeWalker): void;
+    (this: ScopeNodeWalker, node: ScopeNode, walker: ScopeNodeWalker): void | boolean;
 }
 
 export interface Ranged {
@@ -427,13 +454,37 @@ export class ScopeNode implements Ranged {
         return result;
     }
 
-    walk(visitor: ScopeNodeVisitor, parentHandle?: ScopeNodeWalker): ScopeNode[] {
+    search(predicate: ScopeNodeSearchPredicate): ScopeNode[]
+    search(predicate: ScopeNodeSearchPredicate, options: ScopeNodeWalkOptions): ScopeNode[];
+    search(predicate: ScopeNodeSearchPredicate, options: ScopeNodeWalkOptions = {}): ScopeNode[] {
+        const results: ScopeNode[] = [];
+        const opts: Required<ScopeNodeWalkOptions> = { ...defaultScopeNodeWalkOptions, ...options };
+
+        let index = opts.reverse ? this.children.length - 1 : 0;
+        while (index >= 0 && index <= this.children.length) {
+
+            const child = 
+
+            if (opts.reverse) index--;
+            else index++;
+        }
+
+
+        return results;
+    }
+
+    walk(visitor: ScopeNodeVisitor): ScopeNode[];
+    walk(visitor: ScopeNodeVisitor, options: ScopeNodeWalkOptions): ScopeNode[];
+    walk(visitor: ScopeNodeVisitor, options: ScopeNodeWalkOptions, parentHandle: ScopeNodeWalker): ScopeNode[];
+    walk(visitor: ScopeNodeVisitor, options: ScopeNodeWalkOptions = {}, parentHandle?: ScopeNodeWalkerInternal): ScopeNode[] {
+        const opts: Required<ScopeNodeWalkOptions> = { ...defaultScopeNodeWalkOptions, ...options };
         let skippedChildren = false;
         let skippedSiblings = false;
         let aborted = false;
-        const collected: ScopeNode[] = [];
-
-        const handle = {
+        
+        const handle: ScopeNodeWalkerInternal= {
+            collected: parentHandle ? parentHandle.collected : [],
+            breadthFirstInitialPass: opts.strategy === 'breadthFirst',
             abort(): void {
                 aborted = true;
                 if (parentHandle) {
@@ -442,8 +493,9 @@ export class ScopeNode implements Ranged {
             },
             collect: () => {
                 // intentionally using an ArrowFunction instead of an ObjectMethod here to ensure
-                // that within the following closure,`this` says bound to `ScopeNode`
-                collected.push(this);
+                // that within the following closure `this` says bound to `ScopeNode`
+                handle.collected.push(this);
+                if (handle.collected.length === opts.limit) handle.abort();
             },
             skipChildren(): void {
                 skippedChildren = true;
@@ -455,15 +507,38 @@ export class ScopeNode implements Ranged {
                 }
             }
         };
+        
+        // if depth-first, test self 
+        if (opts.strategy === 'depthFirst') {
+            const shouldCollect = visitor.call(handle, this, handle);
+            if (shouldCollect) { handle.collect(); }
+        }
+
+        let index = opts.reverse ? this.children.length - 1 : 0;
+        while (index >= 0 && index <= this.children.length) {
+            if (aborted) break;
+            if (skippedSiblings) break;
+            if (skippedChildren) break;
+
+            if (opts.reverse) index--;
+            else index++;
+        }
+
+        if (aborted) break;
+        if (skippedSiblings) break;
+        if (skippedChildren) break;
 
         visitor.call(handle, this, handle);
         for (const child of this.children) {
             if (aborted) break;
             if (skippedSiblings) break;
             if (skippedChildren) break;
-            collected.push(...child.walk(visitor, handle));
+            collected.push(...child.walk(visitor, opts, handle));
         }
 
+        if (opts.limit !== -1 && collected.length > opts.limit) {
+            if (opts.reverse) collected = collected.slice(0, opts.limit);
+        }
         return collected;
     }
 
