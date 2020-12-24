@@ -64,6 +64,7 @@ test('using source.breakLines() to split up text into multiple lines', () => {
         ['', 'Three line.'],
         newline,
         ['', 'Four.'],
+        newline
     ]]);
 });
 
@@ -112,6 +113,8 @@ test('using source.breakLines() to split up a complex scope tree at each line br
         newline,
         ['element.foo', [
             ['tag.foo.close', '</foo>']
-        ]]
-    ]]); 
+        ]],
+        newline
+    ]]);
+    
 });

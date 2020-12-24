@@ -1,0 +1,216 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`aliased default import 1`] = `
+['source.ts', [
+    ['meta.import', [
+        ['keyword.control.import', 'import'],
+        ['', ' '],
+        ['meta.block', [
+            ['punctuation.definition.block', '{'],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'default'],
+            ['', ' '],
+            ['keyword.control.as', 'as'],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'FooBar'],
+            ['', ' '],
+            ['punctuation.definition.block', '}']
+        ],
+        ['', ' '],
+        ['punctuation.definition.block', 'from'],
+        ['', ' '],
+        ['string.quoted.single', [
+            ['punctuation.definition.string.start', '\\''],
+            ['', './FooBar'],
+            ['punctuation.definition.string.end', '\\'']
+        ]
+    ],
+    ['punctuation.terminator.statement', ';'],
+    ['', '\\n']
+]
+
+`;
+
+exports[`aliased import 1`] = `
+['source.ts', [
+    ['meta.import', [
+        ['keyword.control.import', 'import'],
+        ['', ' '],
+        ['meta.block', [
+            ['punctuation.definition.block', '{'],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'Foo'],
+            ['', ' '],
+            ['keyword.control.as', 'as'],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'Bar'],
+            ['', ' '],
+            ['punctuation.definition.block', '}']
+        ],
+        ['', ' '],
+        ['punctuation.definition.block', 'from'],
+        ['', ' '],
+        ['string.quoted.single', [
+            ['punctuation.definition.string.start', '\\''],
+            ['', './FooBar'],
+            ['punctuation.definition.string.end', '\\'']
+        ]
+    ],
+    ['punctuation.terminator.statement', ';'],
+    ['', '\\n']
+]
+
+`;
+
+exports[`default import 1`] = `
+['source.ts', [
+    ['meta.import', [
+        ['keyword.control.import', 'import'],
+        ['', ' '],
+        ['variable.other.readwrite.alias', 'FooBar'],
+        ['', ' '],
+        ['punctuation.definition.block', 'from'],
+        ['', ' '],
+        ['string.quoted.single', [
+            ['punctuation.definition.string.start', '\\''],
+            ['', './FooBar'],
+            ['punctuation.definition.string.end', '\\'']
+        ]
+    ],
+    ['punctuation.terminator.statement', ';'],
+    ['', '\\n']
+]
+
+`;
+
+exports[`mixed default, named, aliased, and aliased default imports 1`] = `
+['source.ts', [
+    ['meta.import', [
+        ['keyword.control.import', 'import'],
+        ['', ' '],
+        ['variable.other.readwrite.alias', 'FooBar'],
+        ['punctuation.separator.comma', ','],
+        ['', ' '],
+        ['meta.block', [
+            ['punctuation.definition.block', '{'],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'Foo'],
+            ['punctuation.separator.comma', ','],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'Bar'],
+            ['', ' '],
+            ['keyword.control.as', 'as'],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'Baz'],
+            ['punctuation.separator.comma', ','],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'default'],
+            ['', ' '],
+            ['keyword.control.as', 'as'],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'BarFoo'],
+            ['', ' '],
+            ['punctuation.definition.block', '}']
+        ],
+        ['', ' '],
+        ['punctuation.definition.block', 'from'],
+        ['', ' '],
+        ['string.quoted.single', [
+            ['punctuation.definition.string.start', '\\''],
+            ['', './FooBar'],
+            ['punctuation.definition.string.end', '\\'']
+        ]
+    ],
+    ['punctuation.terminator.statement', ';'],
+    ['', '\\n']
+]
+
+`;
+
+exports[`mixed named and default import 1`] = `
+['source.ts', [
+    ['meta.import', [
+        ['keyword.control.import', 'import'],
+        ['', ' '],
+        ['variable.other.readwrite.alias', 'FooBar'],
+        ['punctuation.separator.comma', ','],
+        ['', ' '],
+        ['meta.block', [
+            ['punctuation.definition.block', '{'],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'Foo'],
+            ['punctuation.separator.comma', ','],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'Bar'],
+            ['', ' '],
+            ['punctuation.definition.block', '}']
+        ],
+        ['', ' '],
+        ['punctuation.definition.block', 'from'],
+        ['', ' '],
+        ['string.quoted.single', [
+            ['punctuation.definition.string.start', '\\''],
+            ['', './FooBar'],
+            ['punctuation.definition.string.end', '\\'']
+        ]
+    ],
+    ['punctuation.terminator.statement', ';'],
+    ['', '\\n']
+]
+
+`;
+
+exports[`named imports 1`] = `
+['source.ts', [
+    ['meta.import', [
+        ['keyword.control.import', 'import'],
+        ['', ' '],
+        ['meta.block', [
+            ['punctuation.definition.block', '{'],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'Foo'],
+            ['punctuation.separator.comma', ','],
+            ['', ' '],
+            ['variable.other.readwrite.alias', 'Bar'],
+            ['', ' '],
+            ['punctuation.definition.block', '}']
+        ],
+        ['', ' '],
+        ['punctuation.definition.block', 'from'],
+        ['', ' '],
+        ['string.quoted.single', [
+            ['punctuation.definition.string.start', '\\''],
+            ['', './FooBar'],
+            ['punctuation.definition.string.end', '\\'']
+        ]
+    ],
+    ['punctuation.terminator.statement', ';'],
+    ['', '\\n']
+]
+
+`;
+
+exports[`namespace import 1`] = `
+['source.ts', [
+    ['meta.import', [
+        ['keyword.control.import', 'import'],
+        ['', ' '],
+        ['constant.language.import-export-all', '*'],
+        ['', ' '],
+        ['keyword.control.as', 'as'],
+        ['', ' '],
+        ['variable.other.readwrite.alias', 'FooBar'],
+        ['', ' '],
+        ['punctuation.definition.block', 'from'],
+        ['', ' '],
+        ['string.quoted.single', [
+            ['punctuation.definition.string.start', '\\''],
+            ['', './FooBar'],
+            ['punctuation.definition.string.end', '\\'']
+        ]
+    ],
+    ['punctuation.terminator.statement', ';'],
+    ['', '\\n']
+]
+
+`;

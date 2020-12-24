@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`decrement a variable (with postfix operator: x--) 1`] = `
+['source.ts', [
+    ['', 'let '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
+    ['constant.numeric.decimal', '0'],
+    ['', ';\\n'],
+    ['variable.other.readwrite', 'x'],
+    ['keyword.operator.decrement', '--'],
+    ['', ';\\n']
+]
+
+`;
+
+exports[`decrement a variable (with prefix operator: --x) 1`] = `
+['source.ts', [
+    ['', 'let '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
+    ['constant.numeric.decimal', '0'],
+    ['', ';\\n'],
+    ['keyword.operator.decrement', '--'],
+    ['variable.other.readwrite', 'x'],
+    ['', ';\\n']
+]
+
+`;
+
+exports[`increment a variable (with postfix operator: x++) 1`] = `
+['source.ts', [
+    ['', 'let '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
+    ['constant.numeric.decimal', '0'],
+    ['', ';\\n'],
+    ['variable.other.readwrite', 'x'],
+    ['keyword.operator.increment', '++'],
+    ['', ';\\n']
+]
+
+`;
+
+exports[`increment a variable (with prefix operator: ++x) 1`] = `
+['source.ts', [
+    ['', 'let '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
+    ['constant.numeric.decimal', '0'],
+    ['', ';\\n'],
+    ['keyword.operator.increment', '++'],
+    ['variable.other.readwrite', 'x'],
+    ['', ';\\n']
+]
+
+`;
