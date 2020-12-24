@@ -1,0 +1,184 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ObjectExpression with a computed property names 1`] = `
+['source.ts', [
+    ['', 'const '],
+    ['variable.other.constant', 'FOO'],
+    ['', ' = '],
+    ['variable.other.readwrite', 'Symbol'],
+    ['', '();\\nconst '],
+    ['variable.other.readwrite', 'bar'],
+    ['', ' = '],
+    ['string.quoted.single', [
+        ['punctuation.definition.string.start', '\\''],
+        ['', 'bar'],
+        ['punctuation.definition.string.end', '\\'']
+    ],
+    ['', ';\\nlet '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
+    ['meta.objectliteral', [
+        ['punctuation.definition.block', '{'],
+        ['', '\\n    '],
+        ['meta.object.member', [
+            ['meta.object-literal.key', [
+                ['meta.array.literal', [
+                    ['meta.brace.square', '['],
+                    ['variable.other.constant', 'FOO'],
+                    ['meta.brace.square', ']']
+                ],
+                ['punctuation.separator.key-value', ':']
+            ],
+            ['', ' '],
+            ['string.quoted.single', [
+                ['punctuation.definition.string.start', '\\''],
+                ['', 'bar'],
+                ['punctuation.definition.string.end', '\\'']
+            ]
+        ],
+        ['punctuation.separator.comma', ','],
+        ['', '\\n    '],
+        ['meta.object.member', [
+            ['meta.object-literal.key', [
+                ['meta.array.literal', [
+                    ['meta.brace.square', '['],
+                    ['variable.other.readwrite', 'bar'],
+                    ['', ' '],
+                    ['keyword.operator.arithmetic', '+'],
+                    ['', ' '],
+                    ['constant.numeric.decimal', '4'],
+                    ['meta.brace.square', ']']
+                ],
+                ['punctuation.separator.key-value', ':']
+            ],
+            ['', ' '],
+            ['constant.numeric.decimal', '3']
+        ],
+        ['', '\\n'],
+        ['punctuation.definition.block', '}']
+    ],
+    ['', '\\n']
+]
+
+`;
+
+exports[`ObjectExpression with a shorthand property 1`] = `
+['source.ts', [
+    ['', 'const '],
+    ['variable.other.readwrite', 'bar'],
+    ['', ' = '],
+    ['string.quoted.single', [
+        ['punctuation.definition.string.start', '\\''],
+        ['', 'bar'],
+        ['punctuation.definition.string.end', '\\'']
+    ],
+    ['', ';\\nlet '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
+    ['meta.objectliteral', [
+        ['punctuation.definition.block', '{'],
+        ['', '\\n    '],
+        ['meta.object.member', [
+            ['meta.object-literal.key', [
+                ['variable.other.readwrite', 'foo'],
+                ['punctuation.separator.key-value', ':']
+            ],
+            ['', ' '],
+            ['string.quoted.single', [
+                ['punctuation.definition.string.start', '\\''],
+                ['', 'foo'],
+                ['punctuation.definition.string.end', '\\'']
+            ]
+        ],
+        ['punctuation.separator.comma', ','],
+        ['', '\\n    '],
+        ['meta.object.member', [
+            ['variable.other.readwrite', 'bar']
+        ],
+        ['', '\\n'],
+        ['punctuation.definition.block', '}']
+    ],
+    ['', '\\n']
+]
+
+`;
+
+exports[`simple ObjectExpression with multiple properties 1`] = `
+['source.ts', [
+    ['', 'let '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
+    ['meta.objectliteral', [
+        ['punctuation.definition.block', '{'],
+        ['', '\\n    '],
+        ['meta.object.member', [
+            ['meta.object-literal.key', [
+                ['variable.other.readwrite', 'foo'],
+                ['punctuation.separator.key-value', ':']
+            ],
+            ['', ' '],
+            ['string.quoted.single', [
+                ['punctuation.definition.string.start', '\\''],
+                ['', 'bar'],
+                ['punctuation.definition.string.end', '\\'']
+            ]
+        ],
+        ['punctuation.separator.comma', ','],
+        ['', '\\n    '],
+        ['meta.object.member', [
+            ['meta.object-literal.key', [
+                ['variable.other.readwrite', 'one'],
+                ['punctuation.separator.key-value', ':']
+            ],
+            ['', ' '],
+            ['constant.numeric.decimal', '2']
+        ],
+        ['punctuation.separator.comma', ','],
+        ['', '\\n    '],
+        ['meta.object.member', [
+            ['meta.object-literal.key', [
+                ['constant.numeric.decimal', '7'],
+                ['punctuation.separator.key-value', ':']
+            ],
+            ['', ' '],
+            ['string.quoted.single', [
+                ['punctuation.definition.string.start', '\\''],
+                ['', 'seven'],
+                ['punctuation.definition.string.end', '\\'']
+            ]
+        ],
+        ['', '\\n'],
+        ['punctuation.definition.block', '}']
+    ],
+    ['', '\\n']
+]
+
+`;
+
+exports[`simple ObjectExpression with single property 1`] = `
+['source.ts', [
+    ['', 'let '],
+    ['variable.other.readwrite', 'x'],
+    ['', ' = '],
+    ['meta.objectliteral', [
+        ['punctuation.definition.block', '{'],
+        ['', '\\n    '],
+        ['meta.object.member', [
+            ['meta.object-literal.key', [
+                ['variable.other.readwrite', 'foo'],
+                ['punctuation.separator.key-value', ':']
+            ],
+            ['', ' '],
+            ['string.quoted.single', [
+                ['punctuation.definition.string.start', '\\''],
+                ['', 'bar'],
+                ['punctuation.definition.string.end', '\\'']
+            ]
+        ],
+        ['', '\\n'],
+        ['punctuation.definition.block', '}']
+    ],
+    ['', '\\n']
+]
+
+`;

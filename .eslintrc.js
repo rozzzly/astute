@@ -39,6 +39,9 @@ module.exports = {
             'error',
             'always'
         ],
+        'keyword-spacing': [
+            'error'
+        ],
         'key-spacing': [
             'error'
         ],
