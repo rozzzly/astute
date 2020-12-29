@@ -12,6 +12,31 @@ test('Using .walk() to mark certain elements children what were sliced hierarchi
         src.slice(match.index, match.index + match[1].length).kind = 'adjective';
         src.slice(match.index + match[0].length - match[2].length, match.index + match[0].length).kind = 'noun';
     }
+    expect(src.serialize()).toEqual(['source.test', [
+        ['phrase', [
+            ['adjective', 'one'],
+            ['', ' '],
+            ['noun', 'fish']
+        ]],
+        ['', ' '],
+        ['phrase', [
+            ['adjective', 'two'],
+            ['', ' '],
+            ['noun', 'fish']
+        ]],
+        ['', ' '],
+        ['phrase', [
+            ['adjective', 'red'],
+            ['', ' '],
+            ['noun', 'fish']
+        ]],
+        ['', ' '],
+        ['phrase', [
+            ['adjective', 'blue'],
+            ['', ' '],
+            ['noun', 'fish']
+        ]]
+    ]]);
     src.walk(node => {
         if (node.isTerminal && /^\s+$/g.test(node.text)) {
             node.kind = 'whitespace';
@@ -215,14 +240,16 @@ test(`using a .walk() visitor's walker.collect() to filter out a subset of Scope
         src.slice(match.index, match.index + match[1].length).kind = 'adjective';
         src.slice(match.index + match[0].length - match[2].length, match.index + match[0].length).kind = 'noun';
     }
-    const selected = src.walk((node, handle) => node.text.match(/[aeiou]$/i) && handle.collect());
+    const selected = src.walk((node, handle) => {
+        node.text.match(/[aeiou]$/i) && handle.collect();
+    });
 
     expect(selected.map(node => node.text)).toEqual([
         'one', 'two', 'blue'
     ]);
 });
 
-test(`a .walk() visitor's walker.collect() collects subnodes depth-first`, () => {
+test('a .walk() visitor visits depth-first by default', () => {
     const src = new Source('one fish-0 two fish-1 red fish-2 blue fish-3', 'test');
     const fishRegExp = /(\S+)\s*(fish-\d)/g;
     let match;
@@ -231,17 +258,37 @@ test(`a .walk() visitor's walker.collect() collects subnodes depth-first`, () =>
         src.slice(match.index, match.index + match[1].length).kind = 'adjective';
         src.slice(match.index + match[0].length - match[2].length, match.index + match[0].length).kind = 'noun';
     }
-    const selected = src.walk((node, handle) => node.text.includes('fish') && handle.collect());
+    const selected = src.walk((node, handle) => !!node.text.match(/[aeiou]$/i));
+
+    expect(selected.map(node => node.text)).toEqual([
+        'one',
+        'two',
+        'blue'
+    ]);
+});
+
+test(`a .walk() visitor can be made to search breadth-first by passing {strategy: 'breadthFirst'} as the options parameter for .walk()`, () => {
+    const src = new Source('one fish-0 two fish-1 red fish-2 blue fish-3', 'test');
+    const fishRegExp = /(\S+)\s*(fish-\d)/g;
+    let match;
+    while (match = fishRegExp.exec(src.text)) {
+        src.sliceAndBranch(match.index, match.index + match[0].length).kind = 'phrase';
+        src.slice(match.index, match.index + match[1].length).kind = 'adjective';
+        src.slice(match.index + match[0].length - match[2].length, match.index + match[0].length).kind = 'noun';
+    }
+    const selected = src.walk((node, handle) => {
+        return node.text.includes('fish');
+    }, { strategy: 'breadthFirst'});
 
     expect(selected.map(node => node.text)).toEqual([
         'one fish-0 two fish-1 red fish-2 blue fish-3',
         'one fish-0',
-        'fish-0',
         'two fish-1',
-        'fish-1',
         'red fish-2',
-        'fish-2',
         'blue fish-3',
+        'fish-0',
+        'fish-1',
+        'fish-2',
         'fish-3'
     ]);
 });

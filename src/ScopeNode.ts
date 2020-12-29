@@ -1,3 +1,5 @@
+import { dumbAssert } from './utils';
+
 export interface SlicedScopeNodeGroup {
     head?: ScopeNode;
     target?: ScopeNode;
@@ -19,8 +21,8 @@ export interface ScopeNodeWalker {
 }
 
 export interface ScopeNodeWalkerInternal extends ScopeNodeWalker {
-    collected: ScopeNode[];
-    breadthFirstInitialPass: boolean;
+    _isEnqueuedInBFS: boolean;
+    _collected: ScopeNode[];
 }
 
 export interface ScopeNodeWalkOptions {
@@ -463,7 +465,7 @@ export class ScopeNode implements Ranged {
         let index = opts.reverse ? this.children.length - 1 : 0;
         while (index >= 0 && index <= this.children.length) {
 
-            const child = 
+            //const child =
 
             if (opts.reverse) index--;
             else index++;
@@ -476,15 +478,15 @@ export class ScopeNode implements Ranged {
     walk(visitor: ScopeNodeVisitor): ScopeNode[];
     walk(visitor: ScopeNodeVisitor, options: ScopeNodeWalkOptions): ScopeNode[];
     walk(visitor: ScopeNodeVisitor, options: ScopeNodeWalkOptions, parentHandle: ScopeNodeWalker): ScopeNode[];
-    walk(visitor: ScopeNodeVisitor, options: ScopeNodeWalkOptions = {}, parentHandle?: ScopeNodeWalkerInternal): ScopeNode[] {
+    walk(visitor: ScopeNodeVisitor, options: ScopeNodeWalkOptions = {}, parentHandle?: ScopeNodeWalker): ScopeNode[] {
         const opts: Required<ScopeNodeWalkOptions> = { ...defaultScopeNodeWalkOptions, ...options };
         let skippedChildren = false;
         let skippedSiblings = false;
         let aborted = false;
-        
-        const handle: ScopeNodeWalkerInternal= {
-            collected: parentHandle ? parentHandle.collected : [],
-            breadthFirstInitialPass: opts.strategy === 'breadthFirst',
+        dumbAssert<ScopeNodeWalkerInternal>(parentHandle);
+        const handle: ScopeNodeWalkerInternal = {
+            _isEnqueuedInBFS: parentHandle ? parentHandle._isEnqueuedInBFS : false,
+            _collected: parentHandle ? parentHandle._collected : [],
             abort(): void {
                 aborted = true;
                 if (parentHandle) {
@@ -494,8 +496,8 @@ export class ScopeNode implements Ranged {
             collect: () => {
                 // intentionally using an ArrowFunction instead of an ObjectMethod here to ensure
                 // that within the following closure `this` says bound to `ScopeNode`
-                handle.collected.push(this);
-                if (handle.collected.length === opts.limit) handle.abort();
+                handle._collected.push(this);
+                if (handle._collected.length === opts.limit) handle.abort();
             },
             skipChildren(): void {
                 skippedChildren = true;
@@ -507,39 +509,60 @@ export class ScopeNode implements Ranged {
                 }
             }
         };
-        
-        // if depth-first, test self 
-        if (opts.strategy === 'depthFirst') {
+
+        if (opts.strategy === 'breadthFirst' && !handle._isEnqueuedInBFS) {
+            // this is the search root. This frame will now be in charge of queuing
+            // the BFS search. Toggle `handle._isEnqueuedInBFS` to make sure future calls
+            // to `.walk(...)` don't attempt this BFS queueing logic
+            handle._isEnqueuedInBFS = true;
+            const queue: ScopeNode[] = [this];
+            while (queue.length) {
+                const node = queue.shift();
+                dumbAssert<ScopeNode>(node);
+                // const shouldCollect = visitor.call(handle, node!, handle);
+                // if (shouldCollect) { handle.collect(); }
+                node.walk(visitor, opts, handle);
+                // if (handle.collected.length >= opts.limit && opts.limit !== -1) handle.abort();
+                if (aborted) return handle._collected;
+                if (skippedSiblings) return handle._collected;
+                if (skippedChildren) return handle._collected;
+                queue.push(...(opts.reverse ? node.children.reverse() : node.children));
+            }
+        } else {
+            // test self
             const shouldCollect = visitor.call(handle, this, handle);
             if (shouldCollect) { handle.collect(); }
+
+            // if (handle.collected.length >= opts.limit && opts.limit !== -1) handle.abort();
+            if (aborted) return handle._collected;
+            if (skippedSiblings) return handle._collected;
+            if (skippedChildren) return handle._collected;
+
+            if (this.children.length && opts.strategy === 'depthFirst') {
+                // handle.breadthFirstInitialPass = true;
+                let index = opts.reverse ? this.children.length - 1 : 0;
+                while (index >= 0 && index < this.children.length) {
+                    // if (handle.collected.length >= opts.limit && opts.limit !== -1) handle.abort();
+                    if (aborted) break;
+                    if (skippedSiblings) break;
+                    if (skippedChildren) break;
+
+                    const child = this.children[index];
+                    child.walk(visitor, opts, handle);
+
+                    if (opts.reverse) index--;
+                    else index++;
+                }
+                // handle.breadthFirstInitialPass = false;
+            }
+
+            // if (handle.collected.length >= opts.limit && opts.limit !== -1) handle.abort();
+            if (aborted) return handle._collected;
+            if (skippedSiblings) return handle._collected;
+            if (skippedChildren) return handle._collected;
         }
+        return handle._collected;
 
-        let index = opts.reverse ? this.children.length - 1 : 0;
-        while (index >= 0 && index <= this.children.length) {
-            if (aborted) break;
-            if (skippedSiblings) break;
-            if (skippedChildren) break;
-
-            if (opts.reverse) index--;
-            else index++;
-        }
-
-        if (aborted) break;
-        if (skippedSiblings) break;
-        if (skippedChildren) break;
-
-        visitor.call(handle, this, handle);
-        for (const child of this.children) {
-            if (aborted) break;
-            if (skippedSiblings) break;
-            if (skippedChildren) break;
-            collected.push(...child.walk(visitor, opts, handle));
-        }
-
-        if (opts.limit !== -1 && collected.length > opts.limit) {
-            if (opts.reverse) collected = collected.slice(0, opts.limit);
-        }
-        return collected;
     }
 
     serialize(): SerializedScopeNode {
