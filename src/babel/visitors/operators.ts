@@ -108,7 +108,7 @@ export default function operatorVisitors(this: BabelSource): TraverseOptions {
                 default:
                     throw new Error(`Unhandled UpdateExpression operator: '${node.operator}'`);
             }
-            // TODO use of `!node.prefix` here for the `reverse` parameter is very important:
+            // [ NOTE ] use of `!node.prefix` here for the `reverse` parameter is very important:
             // an example of why: `(foo.bar[++i])++` is a valid `UpdateExpression`. When this visitor reaches
             // the outer `UpdateExpression`, the `reverse` parameter makes it possible to grab just the outer token,
             // not just the one that occurs first.
