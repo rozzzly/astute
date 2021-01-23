@@ -2,7 +2,7 @@ import { test, expect } from '@jest/globals';
 
 import Source from '../src/Source';
 
-test('Using .walk() to mark certain elements children what were sliced hierarchically sliced by .sliceAndBranch()', () => {
+test(`using .walk() to mark certain elements' children that were sliced hierarchically sliced by .sliceAndBranch()`, () => {
     const src = new Source('one fish two fish red fish blue fish', 'test');
     let match, fishRegExp = /(\S+)\s*(fish)/g;
     while (match = fishRegExp.exec(src.text)) {
