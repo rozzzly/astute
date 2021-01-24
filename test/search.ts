@@ -2,7 +2,7 @@ import { test, expect } from '@jest/globals';
 
 import Source from '../src/Source';
 
-test(`using .walk() to mark certain elements' children that were sliced hierarchically sliced by .sliceAndBranch()`, () => {
+test('using .walk() to mark nodes matching a predicate', () => {
     const src = new Source('one fish two fish red fish blue fish', 'test');
     let match, fishRegExp = /(\S+)\s*(fish)/g;
     while (match = fishRegExp.exec(src.text)) {
@@ -138,7 +138,7 @@ test(`using a .walk() visitor's walker.abort() causes the early exit to bubble u
     ]]);
 });
 
-test(`using a .walk() visitor's walker.skipChildren() to prevent walk from going deeper`, () => {
+test(`using a .walk() visitor's walker.skipChildren() to prevent walker from going deeper`, () => {
     const src = new Source('one fish two fish red fish blue fish', 'test');
     let match, fishRegExp = /(\S+)\s*(fish)/g;
     while (match = fishRegExp.exec(src.text)) {
@@ -242,47 +242,9 @@ test(`using a .walk() visitor's walker.collect() to filter out a subset of Scope
     ]);
 });
 
-test('a .walk() visitor visits depth-first by default', () => {
-    const src = new Source('one fish-0 two fish-1 red fish-2 blue fish-3', 'test');
-    let match, fishRegExp = /(\S+)\s*(fish-\d)/g;
-    while (match = fishRegExp.exec(src.text)) {
-        src.sliceAndBranch(match.index, match.index + match[0].length).kind = 'phrase';
-        src.slice(match.index, match.index + match[1].length).kind = 'adjective';
-        src.slice(match.index + match[0].length - match[2].length, match.index + match[0].length).kind = 'noun';
-    }
-    const selected = src.walk((node, handle) => !!node.text.match(/[aeiou]$/i));
-    
-    expect(selected.map(node => node.text)).toEqual([
-        'one',
-        'two',
-        'blue'
-    ]);
-});
 
-test(`a .walk() visitor can be made to search breadth-first by passing {strategy: 'breadthFirst'} as the options parameter for .walk()`, () => {
-    const src = new Source('one fish-0 two fish-1 red fish-2 blue fish-3', 'test');
-    let match, fishRegExp = /(\S+)\s*(fish-\d)/g;
-    while (match = fishRegExp.exec(src.text)) {
-        src.sliceAndBranch(match.index, match.index + match[0].length).kind = 'phrase';
-        src.slice(match.index, match.index + match[1].length).kind = 'adjective';
-        src.slice(match.index + match[0].length - match[2].length, match.index + match[0].length).kind = 'noun';
-    }
-    const selected = src.walk((node, handle) => {
-        return node.text.includes('fish');
-    }, { strategy: 'breadthFirst'});
-    
-    expect(selected.map(node => node.text)).toEqual([
-        'one fish-0 two fish-1 red fish-2 blue fish-3',
-        'one fish-0',
-        'two fish-1', 
-        'red fish-2',
-        'blue fish-3',
-        'fish-0',
-        'fish-1', 
-        'fish-2',
-        'fish-3'
-    ]);
-});
+
+
 
 test('.walk() in BFS mode - walker.skipChildren()', () => {
     const src = new Source('one fish two fish red fish blue fish', 'test');
