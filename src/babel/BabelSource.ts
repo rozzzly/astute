@@ -168,7 +168,7 @@ export class BabelSource extends Source<BabelSourceLang> {
 
             if (low >= high) {
                 mid = low;
-                /// TODO - what was purpose of next line? ids is it just cruft or broken logic gone unnoticed?
+                /// TODO  what was purpose of next line? is it just cruft or broken logic gone unnoticed?
                 // cToken[high];
                 break; // in an infinite loop over the same element
             } else if (cToken.start > start) { // cToken start too late, move cursor left
