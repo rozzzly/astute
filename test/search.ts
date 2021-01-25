@@ -243,9 +243,6 @@ test(`using a .walk() visitor's walker.collect() to filter out a subset of Scope
 });
 
 
-
-
-
 test('.walk() in BFS mode - walker.skipChildren()', () => {
     const src = new Source('one fish two fish red fish blue fish', 'test');
     let match, fishRegExp = /(\S+)\s*(fish)/g;

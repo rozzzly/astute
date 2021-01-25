@@ -38,13 +38,9 @@ const defaultScopeNodeWalkOptions: Required<ScopeNodeWalkOptions> = {
 };
 
 export type ScopeNodeSearchPredicate = (
-    | {
-        (this: ScopeNodeWalker, node: ScopeNode, walker: ScopeNodeWalker): boolean;
-    } | {
-        text: string | RegExp;
-    } | {
-        kind: string | RegExp;
-    }
+    |  ScopeNodeVisitor
+    | { text: string | RegExp; } 
+    | { kind: string | RegExp; }
 );
 
 export interface ScopeNodeVisitor {
@@ -527,7 +523,7 @@ export class ScopeNode implements Ranged {
             walker._isEnqueuedInBFS = true; 
             const queue: ScopeNode[] = [this];
             while (queue.length) {
-                const node = queue.shift();
+                const node = queue.shift(); // remove self from head of queue
                 dumbAssert<ScopeNode>(node);
                 node.walk(visitor, opts, walker);
                 // if (handle.collected.length >= opts.limit && opts.limit !== -1) handle.abort();
@@ -539,7 +535,7 @@ export class ScopeNode implements Ranged {
                         const qNode = queue[siblingOffset];
                         if (qNode.parent === node.parent) siblingOffset++;
                         else if (qNode.parent && qNode.parent.parent === node.parent) {
-                            // node is a queued child of a sibling
+                            // qMode is a queued nephew/niece (ie: child of a sibling) of node
                             // example:
                             //   [  A  ]  [  B  ] [  C  ]
                             //   [A1,A2]  [B1,B2] [C1,C2]
@@ -547,17 +543,17 @@ export class ScopeNode implements Ranged {
                             //   [ C, A1, A2 ]
                             // this will ensure A1, A2 are also removed from the queue 
                             siblingOffset++;
-                            /// TODO: consider creating an option to disable this behavior so 
+                            /// TODO consider creating an option to disable this behavior
                         } else {
                             break;
                         }
                     }
-                    queue.splice(0, siblingOffset);
+                    queue.splice(0, siblingOffset); // drop siblings / their children form queue (but keep own children)
                 }
                 if (!skippedChildren) {
                     queue.push(...(opts.reverse ? node.children.reverse() : node.children));
                 } else {
-                    skippedChildren = false; // reset so it can be used again
+                    skippedChildren = false; // reset so it can be used again (eg: by children)
                 }
             }
         } else {
@@ -565,17 +561,15 @@ export class ScopeNode implements Ranged {
             const shouldCollect = visitor.call(walker, this, walker);
             if (shouldCollect) { walker.collect(); }
             
-            // if (handle.collected.length >= opts.limit && opts.limit !== -1) handle.abort();
             if (aborted) return walker._collected;
-            if (skippedSiblings) return walker._collected;
+            // no need to check skippedSiblings because it will bubble up to parent as skippedChildren
             if (skippedChildren) return walker._collected;
-
+            
             if (opts.strategy === 'depthFirst') {
                 let index = opts.reverse ? this.children.length - 1 : 0;
                 while (index >= 0 && index < this.children.length) {
-                    // if (handle.collected.length >= opts.limit && opts.limit !== -1) handle.abort();
                     if (aborted) break;
-                    // if (skippedSiblings) break; --- don't break because we might want to skip siblings but keep searching children
+                    // no need to check skippedSiblings because it will bubble up to parent as skippedChildren
                     if (skippedChildren) break;
                     
                     let child = this.children[index];
