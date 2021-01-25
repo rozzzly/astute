@@ -543,7 +543,6 @@ export class ScopeNode implements Ranged {
                             //   [ C, A1, A2 ]
                             // this will ensure A1, A2 are also removed from the queue
                             siblingOffset++;
-                            /// TODO consider creating an option to disable this behavior
                         } else {
                             break;
                         }
