@@ -177,3 +177,78 @@ test('.skipSiblings() in reverse BFS mode on a non-terminal ScopeNode', () => {
         'two'
     ]);
 });
+
+
+test('.skipChildren() in BFS mode', () => {
+    const src = setup();
+    const selected = src.walk((node, walker) => {
+        if (node.text === 'two fish-1') walker.skipChildren();
+        return node.text !== ' '; // make expect a little shorter
+    }, { strategy: 'breadthFirst' });
+
+    expect(selected.map(n => n.text)).toEqual([
+        'one fish-0 two fish-1 red fish-2 blue fish-3',
+        'one fish-0',
+        'two fish-1',
+        'red fish-2',
+        'blue fish-3',
+        'one',
+        'fish-0',
+        'red',
+        'fish-2',
+        'blue',
+        'fish-3'
+    ]);
+});
+test('.skipChildren() in reverse BFS mode', () => {
+    const src = setup();
+    const selected = src.walk((node, walker) => {
+        if (node.text === 'two fish-1') walker.skipChildren();
+        return node.text !== ' '; // make expect a little shorter
+    }, { reverse: true, strategy: 'breadthFirst' });
+
+    expect(selected.map(n => n.text)).toEqual([
+        'one fish-0 two fish-1 red fish-2 blue fish-3',
+        'blue fish-3',
+        'red fish-2',
+        'two fish-1',
+        'one fish-0',
+        'fish-3',
+        'blue',
+        'fish-2',
+        'red',
+        'fish-0',
+        'one',
+    ]);
+});
+
+test('.abort() in BFS mode', () => {
+    const src = setup();
+    const selected = src.walk((node, walker) => {
+        if (node.text === 'one') walker.abort();
+        return node.text !== ' '; // make expect a little shorter
+    }, { strategy: 'breadthFirst' });
+    expect(selected.map(n => n.text)).toEqual([
+        'one fish-0 two fish-1 red fish-2 blue fish-3',
+        'one fish-0',
+        'two fish-1',
+        'red fish-2',
+        'blue fish-3',
+        'one',
+    ]);
+});
+
+test('.collect() in BFS mode', () => {
+    const src = setup();
+    const selected = src.walk((node, walker) => {
+        if (node.text.startsWith('blue')) walker.collect();
+        if (/[aeiou]$/.test(node.text)) walker.collect();
+    }, { strategy: 'breadthFirst' });
+    expect(selected.map(n => n.text)).toEqual([
+        'blue fish-3',
+        'one',
+        'two',
+        'blue',
+        'blue'
+    ]);
+});

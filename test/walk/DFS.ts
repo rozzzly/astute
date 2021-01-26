@@ -235,13 +235,16 @@ test('.abort() in DFS mode', () => {
 test('.collect() in DFS mode', () => {
     const src = setup();
     const selected = src.walk((node, walker) => {
-        if (/[aeiou]$/.test(node.text)) {
-            walker.collect();
-        }
+        if (node.text.startsWith('blue')) walker.collect();
+        if (/[aeiou]$/.test(node.text)) walker.collect();
     });
     expect(selected.map(n => n.text)).toEqual([
         'one',
         'two',
+        'blue fish-3',
+        'blue',
         'blue'
     ]);
 });
+
+
