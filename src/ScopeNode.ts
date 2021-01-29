@@ -1,4 +1,4 @@
-import { dumbAssert } from './utils';
+import { dumbAssert, RequireSome } from './utils';
 
 export interface SlicedScopeNodeGroup {
     head?: ScopeNode;
@@ -37,10 +37,17 @@ const defaultScopeNodeWalkOptions: Required<ScopeNodeWalkOptions> = {
     strategy: 'depthFirst'
 };
 
+export type ScopeNodeSearchOperands = {
+    text: string | RegExp;
+    kind: string | RegExp;
+}
+
 export type ScopeNodeSearchPredicate = (
-    |  ScopeNodeVisitor
-    | { text: string | RegExp; }
-    | { kind: string | RegExp; }
+    | ((node: ScopeNode) => boolean)
+    | (
+        & { parent?: ScopeNodeSearchPredicate }
+        & RequireSome<ScopeNodeSearchOperands>
+    )
 );
 
 export interface ScopeNodeVisitor {
@@ -454,21 +461,34 @@ export class ScopeNode implements Ranged {
 
     search(predicate: ScopeNodeSearchPredicate): ScopeNode[]
     search(predicate: ScopeNodeSearchPredicate, options: ScopeNodeWalkOptions): ScopeNode[];
-    search(predicate: ScopeNodeSearchPredicate, options: ScopeNodeWalkOptions = {}): ScopeNode[] {
-        const results: ScopeNode[] = [];
+    search(_predicate: ScopeNodeSearchPredicate, options: ScopeNodeWalkOptions = {}): ScopeNode[] {
         const opts: Required<ScopeNodeWalkOptions> = { ...defaultScopeNodeWalkOptions, ...options };
-
-        let index = opts.reverse ? this.children.length - 1 : 0;
-        while (index >= 0 && index <= this.children.length) {
-
-            //const child =
-
-            if (opts.reverse) index--;
-            else index++;
-        }
-
-
-        return results;
+        const visitor = (node: ScopeNode) => {
+            let cNode = node;
+            let predicate = _predicate;
+            while (predicate) {
+                if (typeof predicate === 'function') return predicate(cNode);
+                else {
+                    if ('kind' in predicate && predicate.kind !== undefined) {
+                        if (typeof predicate.kind === 'string') {
+                            if (predicate.kind !==  cNode.kind) return false;
+                        } else  {
+                            if (!predicate.kind.test(cNode.kind)) return false;
+                        }
+                    }
+                    if ('text' in predicate && predicate.text !== undefined) {
+                        if (typeof predicate.text === 'string') {
+                            if (predicate.text !==  cNode.kind) return false;
+                        } else  {
+                            if (!predicate.text.test(cNode.text)) return false;
+                        }
+                    }
+                }
+                predicate = predicate.parent!;
+                cNode = cNode.parent!;
+            }
+        };
+        return this.walk(visitor, opts);
     }
 
     walk(visitor: ScopeNodeVisitor): ScopeNode[];
