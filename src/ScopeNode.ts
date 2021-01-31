@@ -37,17 +37,14 @@ const defaultScopeNodeWalkOptions: Required<ScopeNodeWalkOptions> = {
     strategy: 'depthFirst'
 };
 
-export type ScopeNodeSearchOperands = {
-    text: string | RegExp;
-    kind: string | RegExp;
-}
-
 export type ScopeNodeSearchPredicate = (
     | ((node: ScopeNode) => boolean)
-    | (
-        & { parent?: ScopeNodeSearchPredicate }
-        & RequireSome<ScopeNodeSearchOperands>
-    )
+    | {
+        text?: string | RegExp;
+        kind?: string | RegExp;
+        parent?: ScopeNodeSearchPredicate;
+        ancestor?: ScopeNodeSearchPredicate;
+    }
 );
 
 export interface ScopeNodeVisitor {
@@ -463,32 +460,40 @@ export class ScopeNode implements Ranged {
     search(predicate: ScopeNodeSearchPredicate, options: ScopeNodeWalkOptions): ScopeNode[];
     search(_predicate: ScopeNodeSearchPredicate, options: ScopeNodeWalkOptions = {}): ScopeNode[] {
         const opts: Required<ScopeNodeWalkOptions> = { ...defaultScopeNodeWalkOptions, ...options };
-        const visitor = (node: ScopeNode) => {
-            let cNode = node;
-            let predicate = _predicate;
-            while (predicate) {
-                if (typeof predicate === 'function') return predicate(cNode);
-                else {
-                    if ('kind' in predicate && predicate.kind !== undefined) {
-                        if (typeof predicate.kind === 'string') {
-                            if (predicate.kind !==  cNode.kind) return false;
-                        } else  {
-                            if (!predicate.kind.test(cNode.kind)) return false;
-                        }
-                    }
-                    if ('text' in predicate && predicate.text !== undefined) {
-                        if (typeof predicate.text === 'string') {
-                            if (predicate.text !==  cNode.kind) return false;
-                        } else  {
-                            if (!predicate.text.test(cNode.text)) return false;
-                        }
+
+        const filter = (node: ScopeNode, predicate: ScopeNodeSearchPredicate): boolean => {
+            if (typeof predicate === 'function') return predicate(node);
+            if ('kind' in predicate && predicate.kind !== undefined) {
+                if (typeof predicate.kind === 'string') {
+                    if (predicate.kind !==  node.kind) return false;
+                } else  {
+                    if (!predicate.kind.test(node.kind)) return false;
+                }
+            }
+            if ('text' in predicate && predicate.text !== undefined) {
+                if (typeof predicate.text === 'string') {
+                    if (predicate.text !==  node.text) return false;
+                } else  {
+                    if (!predicate.text.test(node.text)) return false;
+                }
+            }
+
+            if (predicate.ancestor) {
+                let cNode: ScopeNode | null = node, ancestorMatch = false;
+                while (cNode = cNode.parent) {
+                    if (filter(cNode, predicate.ancestor)) {
+                        ancestorMatch = true;
+                        break;
                     }
                 }
-                predicate = predicate.parent!;
-                cNode = cNode.parent!;
+                if (!ancestorMatch) return false;
             }
+
+            if (predicate.parent) return filter(node, predicate.parent);
+            else return true;
         };
-        return this.walk(visitor, opts);
+
+        return this.walk(node => filter(node, _predicate), opts);
     }
 
     walk(visitor: ScopeNodeVisitor): ScopeNode[];
