@@ -12,6 +12,7 @@
         "test": "jest",
         "coverage": "jest --coverage",
         "dev": "jest --watch",
+        "coverage": "jest --coverage",
         "build:types": "tsc -p ./tsconfig.dist.json --emitDeclarationOnly",
         "build:esm": "TARGET=esm babel src --out-dir bin/esm --extensions \".ts,.tsx\"",
         "build:cjs": "TARGET=cjs babel src --out-dir bin/cjs --extensions \".ts,.tsx\"",
