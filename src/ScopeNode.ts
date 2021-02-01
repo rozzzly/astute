@@ -37,11 +37,14 @@ const defaultScopeNodeWalkOptions: Required<ScopeNodeWalkOptions> = {
     strategy: 'depthFirst'
 };
 
+
 export type ScopeNodeSearchPredicate = (
     | ((node: ScopeNode) => boolean)
     | {
-        text?: string | RegExp;
-        kind?: string | RegExp;
+        text?: string | string[] | RegExp;
+        kind?: string | string[] | RegExp;
+        notText?: string | string[] | RegExp;
+        notKind?: string | string[] | RegExp;
         parent?: ScopeNodeSearchPredicate;
         ancestor?: ScopeNodeSearchPredicate;
     }
@@ -466,15 +469,37 @@ export class ScopeNode implements Ranged {
             if ('kind' in predicate && predicate.kind !== undefined) {
                 if (typeof predicate.kind === 'string') {
                     if (predicate.kind !==  node.kind) return false;
-                } else  {
+                } else if (Array.isArray(predicate.kind)) {
+                    if (!predicate.kind.some(k => node.kind === k)) return false;
+                } else {
                     if (!predicate.kind.test(node.kind)) return false;
                 }
             }
             if ('text' in predicate && predicate.text !== undefined) {
                 if (typeof predicate.text === 'string') {
                     if (predicate.text !==  node.text) return false;
+                } else if (Array.isArray(predicate.text)) {
+                    if (!predicate.text.some(t => node.text === t)) return false;
                 } else  {
                     if (!predicate.text.test(node.text)) return false;
+                }
+            }
+            if ('notKind' in predicate && predicate.notKind !== undefined) {
+                if (typeof predicate.notKind === 'string') {
+                    if (predicate.notKind === node.kind) return false;
+                } else if (Array.isArray(predicate.notKind)) {
+                    if (predicate.notKind.some(k => node.kind === k)) return false;
+                } else {
+                    if (predicate.notKind.test(node.text)) return false;
+                }
+            }
+            if ('notText' in predicate && predicate.notText !== undefined) {
+                if (typeof predicate.notText === 'string') {
+                    if (predicate.notText ===  node.text) return false;
+                } else if (Array.isArray(predicate.notText)) {
+                    if (predicate.notText.some(t => node.text === t)) return false;
+                } else  {
+                    if (predicate.notText.test(node.text)) return false;
                 }
             }
 
