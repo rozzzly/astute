@@ -35,7 +35,7 @@ export default function objectVisitors(this: BabelSource): TraverseOptions {
                 }
                 castAsRanged(node.key);
                 castAsRanged(node.value);
-                let [ separator ] = this.findBabelTokens(node.key.end, node.value.start, bToken => (
+                const [ separator ] = this.findBabelTokens(node.key.end, node.value.start, bToken => (
                     bToken.type.label === ':'
                 ), 1);
                 if (!separator) {

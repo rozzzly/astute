@@ -22,8 +22,8 @@ export default function miscVisitors(this: BabelSource): TraverseOptions {
                 const metaBlock = importDecl.sliceAndBranch(openingPunct.start, closingPunct.end);
                 metaBlock.kind = 'meta.block';
             }
-            
-            for (let babelToken of babelTokens) {
+
+            for (const babelToken of babelTokens) {
                 if (babelToken.type.label === 'import') {
                     this.slice(babelToken).kind = 'keyword.control.import';
                 } else if (babelToken.type.label === '{') {

@@ -4923,10 +4923,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@^4.1.2:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.2.tgz#6369ef22516fe5e10304aae5a5c4862db55380e9"
-  integrity sha512-thGloWsGH3SOxv1SoY7QojKi0tc+8FnOmiarEGMbd/lar7QOEd3hvlx3Fp5y6FlDUGl9L+pd4n2e+oToGMmhRQ==
+typescript@^4.2.0-dev.20210127:
+  version "4.2.0-dev.20210127"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.0-dev.20210127.tgz#7e7b3a13ced8c9c9121a9f1260e14379913b3481"
+  integrity sha512-Cf4mVnydVS0TPY9k4SMZWZY9c5LT+C8mewbWS7xpTEFdzryaCYpwD2JXHOO1EAzvVGXpEBYajIPQwTV0jaWkdQ==
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"
