@@ -3,7 +3,7 @@ import { stripIndent } from 'common-tags';
 import Source from '../../src/Source';
 import { markTags } from '../_simple-tags';
 
-test('.search() with simple .text match', () => {
+test('.search() with a simple .text match', () => {
     const src = new Source(stripIndent`
         <foo><bar>double nested</bar></foo>
         <foo>
@@ -12,11 +12,11 @@ test('.search() with simple .text match', () => {
         </foo>
     `, 'test');
     markTags(src);
-    const [filtered] = src.search({ text: 'multiple' });
+    const [ filtered ] = src.search({ text: 'multiple' });
     expect(filtered.parent?.text).toBe('<bar>multiple</bar>');
 });
 
-test('.search() with regex .text match', () => {
+test('.search() with a regex .text match', () => {
     const src = new Source(stripIndent`
         <foo><bar>double nested</bar></foo>
         <foo>
@@ -25,7 +25,7 @@ test('.search() with regex .text match', () => {
         </foo>
     `, 'test');
     markTags(src);
-    const filtered = src.search({ text: /^\<\/?bar\>/ });
+    const filtered = src.search({ text: /^<\/?bar>/ });
     expect(filtered.map(n => n.text)).toEqual([
         '<bar>double nested</bar>', // twice because inside of <foo>...</foo> has its
         '<bar>double nested</bar>', // own node with <bar>...</bar> as its sole child
@@ -37,6 +37,25 @@ test('.search() with regex .text match', () => {
         '<bar>children</bar>',
         '<bar>',
         '</bar>'
+    ]);
+});
+
+test('.search() with multiple simple .text matches', () => {
+    const src = new Source(stripIndent`
+        <foo><bar>double nested</bar></foo>
+        <foo>
+            <bar>multiple</bar>
+            <bar>children</bar>
+        </foo>
+    `, 'test');
+    markTags(src);
+    const filtered = src.search({ text: ['multiple', 'children'] });
+    // expect(filtered.parent?.text).toBe('<bar>multiple</bar>');
+    expect(filtered.map(n => n.kind)).toEqual([
+        'element.bar.body', // enclosing body
+        '', // plaintext
+        'element.bar.body', // enclosing body
+        '' // plaintext
     ]);
 });
 
@@ -66,7 +85,7 @@ test('.search() with regex .kind match', () => {
         </foo>
     `, 'test');
     markTags(src);
-    const filtered = src.search({ kind: /element\.[^\.]*$/ });
+    const filtered = src.search({ kind: /element\.[^.]*$/g });
     expect(filtered.map(n => n.kind)).toEqual([
         'element.foo',
         'element.bar',
@@ -76,3 +95,21 @@ test('.search() with regex .kind match', () => {
     ]);
 });
 
+test('.search() with multiple simple .kind matches', () => {
+    const src = new Source(stripIndent`
+        <foo><bar>double nested</bar></foo>
+        <foo>
+            <bar>multiple</bar>
+            <bar>children</bar>
+        </foo>
+    `, 'test');
+    markTags(src);
+    const filtered = src.search({ kind: ['tag.foo.open', 'tag.bar.close'] });
+    expect(filtered.map(n => n.text)).toEqual([
+        '<foo>',
+        '</bar>',
+        '<foo>',
+        '</bar>',
+        '</bar>'
+    ]);
+});

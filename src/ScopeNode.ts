@@ -1,4 +1,4 @@
-import { dumbAssert, RequireSome } from './utils';
+import { dumbAssert } from './utils';
 
 export interface SlicedScopeNodeGroup {
     head?: ScopeNode;

@@ -80,7 +80,7 @@ test('Using .sliceAndBranch() to slice up children of root node hierarchically',
     ]]);
 });
 
-test('using .sliceAndBranch() to slice text into a complex scope tree', () => {
+test('using .sliceAndBranch() to slice text  a complex scope tree', () => {
     const src = new Source(stripIndent`
         <foo><bar>double nested</bar></foo>
         <foo>
