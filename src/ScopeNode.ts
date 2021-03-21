@@ -95,6 +95,18 @@ export class ScopeNode implements Ranged {
         return depth;
     }
 
+    get scopes(): string[] {
+        const res = [];
+        let n: ScopeNode | null = this;
+        do {
+            if (n.kind) res.push(n.kind);
+        } while (n = n.parent);
+        return res;
+    }
+    get invertedScopes(): string[] {
+        return this.scopes.reverse();
+    }
+
     get index(): number {
         if (!this.parent) {
             const e = new Error('this should never be called on the root node!');

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ObjectExpression with a computed property names 1`] = `
+exports[`ObjectExpression with a computed property name 1`] = `
 ['source.ts', [
     ['', 'const '],
     ['variable.other.constant', 'FOO'],
@@ -80,7 +80,7 @@ exports[`ObjectExpression with a shorthand property 1`] = `
         ['', '\\n    '],
         ['meta.object.member', [
             ['meta.object-literal.key', [
-                ['variable.other.readwrite', 'foo'],
+                ['', 'foo'],
                 ['punctuation.separator.key-value', ':']
             ],
             ['', ' '],
@@ -113,7 +113,7 @@ exports[`simple ObjectExpression with multiple properties 1`] = `
         ['', '\\n    '],
         ['meta.object.member', [
             ['meta.object-literal.key', [
-                ['variable.other.readwrite', 'foo'],
+                ['', 'foo'],
                 ['punctuation.separator.key-value', ':']
             ],
             ['', ' '],
@@ -127,17 +127,16 @@ exports[`simple ObjectExpression with multiple properties 1`] = `
         ['', '\\n    '],
         ['meta.object.member', [
             ['meta.object-literal.key', [
-                ['variable.other.readwrite', 'one'],
+                ['', 'one'],
                 ['punctuation.separator.key-value', ':']
             ],
-            ['', ' '],
-            ['constant.numeric.decimal', '2']
+            ['', ' 2']
         ],
         ['punctuation.separator.comma', ','],
         ['', '\\n    '],
         ['meta.object.member', [
             ['meta.object-literal.key', [
-                ['constant.numeric.decimal', '7'],
+                ['', '7'],
                 ['punctuation.separator.key-value', ':']
             ],
             ['', ' '],
@@ -165,7 +164,7 @@ exports[`simple ObjectExpression with single property 1`] = `
         ['', '\\n    '],
         ['meta.object.member', [
             ['meta.object-literal.key', [
-                ['variable.other.readwrite', 'foo'],
+                ['', 'foo'],
                 ['punctuation.separator.key-value', ':']
             ],
             ['', ' '],

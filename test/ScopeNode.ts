@@ -57,10 +57,11 @@ test('zero-width .slice() is prohibited', () => {
     expect(src.children[1].text).toBe('bar');
 });
 
-test('A ScopeNode is created as the sole child of a Source when it is created', () => {
+test('A Source is created with a single untagged ScopeNode as its child', () => {
     const src = new Source('one fish two fish red fish blue fish', 'test');
     expect(src.children.length).toBe(1);
     expect(src.children[0]).toBeInstanceOf(ScopeNode);
+    expect(src.children[0].kind).toBe('');
     expect(src.children[0].text).toBe('one fish two fish red fish blue fish');
 });
 

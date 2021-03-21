@@ -61,7 +61,12 @@ export default function primitiveVisitors(this: BabelSource): TraverseOptions {
             literal.kind = 'constant.numeric.decimal';
             literal.slice(node.end - 1, node.end).kind = 'storage.type.numeric.bigint';
         },
-        NumericLiteral: ({ node }) => {
+        NumericLiteral: path => {
+            const { node, parent } = path;
+            if (t.isObjectProperty(parent) && !parent.computed) {
+                return; // noop; don't tag normal object literal keys as numbers unless its (the only component of)u a computer property
+            }
+
             castAsRanged(node);
             // this.findAndSlice(node).kind = 'constant.numeric.decimal';
             let kind = 'constant.numeric.decimal';
