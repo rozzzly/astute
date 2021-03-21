@@ -82,7 +82,7 @@ test('Using .sliceAndBranch() to slice up children of root node hierarchically',
     ]]);
 });
 
-test('using .sliceAndBranch() to slice text into a complex scope tree', () => {
+test('using .sliceAndBranch() to slice text a complex scope tree', () => {
     const src = new Source(stripIndent`
         <foo><bar>double nested</bar></foo>
         <foo>
@@ -95,39 +95,29 @@ test('using .sliceAndBranch() to slice text into a complex scope tree', () => {
     expect(src.serialize()).toEqual(['source.test', [
         ['element.foo', [
             ['tag.foo.open', '<foo>'],
-            ['element.foo.body', [
-                ['element.bar', [
-                    ['tag.bar.open', '<bar>'],
-                    ['element.bar.body', [
-                        ['', 'double nested']
-                    ]],
-                    ['tag.bar.close', '</bar>']
-                ]]
+            ['element.bar', [
+                ['tag.bar.open', '<bar>'],
+                ['', 'double nested'],
+                ['tag.bar.close', '</bar>']
             ]],
             ['tag.foo.close', '</foo>']
         ]],
         ['', '\n'],
         ['element.foo', [
             ['tag.foo.open', '<foo>'],
-            ['element.foo.body', [
-                ['', '\n    '],
-                ['element.bar', [
-                    ['tag.bar.open', '<bar>'],
-                    ['element.bar.body', [
-                        ['', 'multiple']
-                    ]],
-                    ['tag.bar.close', '</bar>']
-                ]],
-                ['', '\n    '],
-                ['element.bar', [
-                    ['tag.bar.open', '<bar>'],
-                    ['element.bar.body', [
-                        ['', 'children']
-                    ]],
-                    ['tag.bar.close', '</bar>']
-                ]],
-                ['', '\n'],
+            ['', '\n    '],
+            ['element.bar', [
+                ['tag.bar.open', '<bar>'],
+                ['', 'multiple'],
+                ['tag.bar.close', '</bar>']
             ]],
+            ['', '\n    '],
+            ['element.bar', [
+                ['tag.bar.open', '<bar>'],
+                ['', 'children'],
+                ['tag.bar.close', '</bar>']
+            ]],
+            ['', '\n'],
             ['tag.foo.close', '</foo>']
         ]],
         ['', '\n']
