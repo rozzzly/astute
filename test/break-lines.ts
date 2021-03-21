@@ -82,14 +82,10 @@ test('using source.breakLines() to split up a complex scope tree at each line br
     expect(src.serialize()).toEqual(['source.test', [
         ['element.foo', [
             ['tag.foo.open', '<foo>'],
-            ['element.foo.body', [
-                ['element.bar', [
-                    ['tag.bar.open', '<bar>'],
-                    ['element.bar.body', [
-                        ['', 'double nested']
-                    ]],
-                    ['tag.bar.close', '</bar>']
-                ]]
+            ['element.bar', [
+                ['tag.bar.open', '<bar>'],
+                ['', 'double nested'],
+                ['tag.bar.close', '</bar>']
             ]],
             ['tag.foo.close', '</foo>']
         ]],
@@ -99,15 +95,11 @@ test('using source.breakLines() to split up a complex scope tree at each line br
         ]],
         newline,
         ['element.foo', [
-            ['element.foo.body', [
-                ['', '    multi']
-            ]],
+            ['', '    multi']
         ]],
         newline,
         ['element.foo', [
-            ['element.foo.body', [
-                ['', '    line!']
-            ]],
+            ['', '    line!']
         ]],
         newline,
         ['element.foo', [
