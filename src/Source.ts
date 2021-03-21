@@ -39,7 +39,7 @@ export class Source<SourceLang extends string = string> extends ScopeNode {
         const result: ScopeNode[][] = [];
         let currentLine: ScopeNode[] = [];
         for (const node of this.children) {
-            if (node.kind == 'newline') {
+            if (node.kind === 'newline') {
                 result.push(currentLine);
                 currentLine = [];
             } else {
