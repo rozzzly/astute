@@ -1,3 +1,5 @@
+import { dumbAssert } from './utils';
+
 export interface SlicedScopeNodeGroup {
     head?: ScopeNode;
     target?: ScopeNode;
@@ -18,8 +20,38 @@ export interface ScopeNodeWalker {
     abort(): void;
 }
 
+export interface ScopeNodeWalkerInternal extends ScopeNodeWalker {
+    _isEnqueuedInBFS: boolean;
+    _collected: ScopeNode[];
+}
+
+export interface ScopeNodeWalkOptions {
+    limit?: number;
+    reverse?: boolean;
+    strategy?: 'depthFirst' | 'breadthFirst'
+}
+
+const defaultScopeNodeWalkOptions: Required<ScopeNodeWalkOptions> = {
+    limit: -1,
+    reverse: false,
+    strategy: 'depthFirst'
+};
+
+
+export type ScopeNodeSearchPredicate = (
+    | ((node: ScopeNode) => boolean)
+    | {
+        text?: string | string[] | RegExp;
+        kind?: string | string[] | RegExp;
+        notText?: string | string[] | RegExp;
+        notKind?: string | string[] | RegExp;
+        parent?: ScopeNodeSearchPredicate;
+        ancestor?: ScopeNodeSearchPredicate;
+    }
+);
+
 export interface ScopeNodeVisitor {
-    (this: ScopeNodeWalker, node: ScopeNode, walker: ScopeNodeWalker): void;
+    (this: ScopeNodeWalker, node: ScopeNode, walker: ScopeNodeWalker): void | boolean;
 }
 
 export interface Ranged {
@@ -427,44 +459,179 @@ export class ScopeNode implements Ranged {
         return result;
     }
 
-    walk(visitor: ScopeNodeVisitor, parentHandle?: ScopeNodeWalker): ScopeNode[] {
+    search(predicate: ScopeNodeSearchPredicate): ScopeNode[]
+    search(predicate: ScopeNodeSearchPredicate, options: ScopeNodeWalkOptions): ScopeNode[];
+    search(_predicate: ScopeNodeSearchPredicate, options: ScopeNodeWalkOptions = {}): ScopeNode[] {
+        const opts: Required<ScopeNodeWalkOptions> = { ...defaultScopeNodeWalkOptions, ...options };
+
+        const filter = (node: ScopeNode, predicate: ScopeNodeSearchPredicate): boolean => {
+            if (typeof predicate === 'function') return predicate(node);
+            if ('kind' in predicate && predicate.kind !== undefined) {
+                if (typeof predicate.kind === 'string') {
+                    if (predicate.kind !==  node.kind) return false;
+                } else if (Array.isArray(predicate.kind)) {
+                    if (!predicate.kind.some(k => node.kind === k)) return false;
+                } else {
+                    if (!predicate.kind.test(node.kind)) return false;
+                }
+            }
+            if ('text' in predicate && predicate.text !== undefined) {
+                if (typeof predicate.text === 'string') {
+                    if (predicate.text !==  node.text) return false;
+                } else if (Array.isArray(predicate.text)) {
+                    if (!predicate.text.some(t => node.text === t)) return false;
+                } else  {
+                    if (!predicate.text.test(node.text)) return false;
+                }
+            }
+            if ('notKind' in predicate && predicate.notKind !== undefined) {
+                if (typeof predicate.notKind === 'string') {
+                    if (predicate.notKind === node.kind) return false;
+                } else if (Array.isArray(predicate.notKind)) {
+                    if (predicate.notKind.some(k => node.kind === k)) return false;
+                } else {
+                    if (predicate.notKind.test(node.text)) return false;
+                }
+            }
+            if ('notText' in predicate && predicate.notText !== undefined) {
+                if (typeof predicate.notText === 'string') {
+                    if (predicate.notText ===  node.text) return false;
+                } else if (Array.isArray(predicate.notText)) {
+                    if (predicate.notText.some(t => node.text === t)) return false;
+                } else  {
+                    if (predicate.notText.test(node.text)) return false;
+                }
+            }
+
+            if (predicate.ancestor) {
+                let cNode: ScopeNode | null = node, ancestorMatch = false;
+                while (cNode = cNode.parent) {
+                    if (filter(cNode, predicate.ancestor)) {
+                        ancestorMatch = true;
+                        break;
+                    }
+                }
+                if (!ancestorMatch) return false;
+            }
+
+            if (predicate.parent && node.parent) return filter(node.parent, predicate.parent);
+            else return true;
+        };
+
+        return this.walk(node => filter(node, _predicate), opts);
+    }
+
+    walk(visitor: ScopeNodeVisitor): ScopeNode[];
+    walk(visitor: ScopeNodeVisitor, options: ScopeNodeWalkOptions): ScopeNode[];
+    walk(visitor: ScopeNodeVisitor, options: ScopeNodeWalkOptions, parentWalker: ScopeNodeWalker): ScopeNode[];
+    walk(visitor: ScopeNodeVisitor, options: ScopeNodeWalkOptions = {}, parentWalker?: ScopeNodeWalker): ScopeNode[] {
+        const opts: Required<ScopeNodeWalkOptions> = { ...defaultScopeNodeWalkOptions, ...options };
         let skippedChildren = false;
         let skippedSiblings = false;
         let aborted = false;
-        const collected: ScopeNode[] = [];
-
-        const handle = {
+        dumbAssert<ScopeNodeWalkerInternal>(parentWalker);
+        const walker: ScopeNodeWalkerInternal = {
+            _isEnqueuedInBFS: parentWalker ? parentWalker._isEnqueuedInBFS : false,
+            _collected: parentWalker ? parentWalker._collected : [],
             abort(): void {
                 aborted = true;
-                if (parentHandle) {
-                    parentHandle.abort();
+                if (parentWalker) {
+                    parentWalker.abort();
                 }
             },
             collect: () => {
                 // intentionally using an ArrowFunction instead of an ObjectMethod here to ensure
-                // that within the following closure,`this` says bound to `ScopeNode`
-                collected.push(this);
+                // that within the following closure `this` says bound to `ScopeNode`
+                walker._collected.push(this);
+                if (walker._collected.length === opts.limit) walker.abort();
             },
             skipChildren(): void {
-                skippedChildren = true;
+                if (opts.strategy === 'breadthFirst' && parentWalker) {
+                    // BFS bubble up to trigger .skipChildren() on stack frame managing queue
+                    parentWalker.skipChildren();
+                } else { // when DFS or when BFS queue manager
+                    skippedChildren = true;
+                }
             },
             skipSiblings(): void {
-                skippedSiblings = true;
-                if (parentHandle) {
-                    parentHandle.skipChildren();
+                if (opts.strategy === 'breadthFirst' && parentWalker) {
+                    // BFS bubble up to trigger .skipSiblings() on stack frame managing queue
+                    parentWalker.skipSiblings();
+                } else { // when DFS or when BFS queue manager
+                    skippedSiblings = true;
+                    if (parentWalker) { // when DFS
+                        parentWalker.skipChildren();
+                    }
                 }
             }
         };
 
-        visitor.call(handle, this, handle);
-        for (const child of this.children) {
-            if (aborted) break;
-            if (skippedSiblings) break;
-            if (skippedChildren) break;
-            collected.push(...child.walk(visitor, handle));
-        }
+        if (opts.strategy === 'breadthFirst' && !walker._isEnqueuedInBFS) {
+            // this is the search root. This stack frame will now be in charge of queuing
+            // the BFS search. Toggle `handle._isEnqueuedInBFS` to make sure future calls
+            // to `.walk(...)` don't attempt this BFS queueing logic
+            walker._isEnqueuedInBFS = true;
+            const queue: ScopeNode[] = [this];
+            while (queue.length) {
+                const node = queue.shift(); // remove self from head of queue
+                dumbAssert<ScopeNode>(node);
+                node.walk(visitor, opts, walker);
+                // if (handle.collected.length >= opts.limit && opts.limit !== -1) handle.abort();
+                if (aborted) return walker._collected;
+                if (skippedSiblings) {
+                    skippedSiblings = false; // reset so it can be used again
+                    let siblingOffset = 0;
+                    while (siblingOffset < queue.length) {
+                        const qNode = queue[siblingOffset];
+                        if (qNode.parent === node.parent) siblingOffset++;
+                        else if (qNode.parent && qNode.parent.parent === node.parent) {
+                            // qMode is a queued nephew/niece (ie: child of a sibling) of node
+                            // example:
+                            //   [  A  ]  [  B  ] [  C  ]
+                            //   [A1,A2]  [B1,B2] [C1,C2]
+                            // if cursor is at B, queue looks like:
+                            //   [ C, A1, A2 ]
+                            // this will ensure A1, A2 are also removed from the queue
+                            siblingOffset++;
+                            /// TODO consider creating an option to disable this behavior
+                        } else {
+                            break;
+                        }
+                    }
+                    queue.splice(0, siblingOffset); // drop siblings / their children form queue (but keep own children)
+                }
+                if (!skippedChildren) {
+                    queue.push(...(opts.reverse ? node.children.reverse() : node.children));
+                } else {
+                    skippedChildren = false; // reset so it can be used again (eg: by children)
+                }
+            }
+        } else {
+            // test self
+            const shouldCollect = visitor.call(walker, this, walker);
+            if (shouldCollect) { walker.collect(); }
 
-        return collected;
+            if (aborted) return walker._collected;
+            // no need to check skippedSiblings because it will bubble up to parent as skippedChildren
+            if (skippedChildren) return walker._collected;
+
+            if (opts.strategy === 'depthFirst') {
+                let index = opts.reverse ? this.children.length - 1 : 0;
+                while (index >= 0 && index < this.children.length) {
+                    if (aborted) break;
+                    // no need to check skippedSiblings because it will bubble up to parent as skippedChildren
+                    if (skippedChildren) break;
+
+                    const child = this.children[index];
+                    child.walk(visitor, opts, walker);
+
+                    if (opts.reverse) index--;
+                    else index++;
+                }
+            }
+        }
+        return walker._collected;
+
     }
 
     serialize(): SerializedScopeNode {

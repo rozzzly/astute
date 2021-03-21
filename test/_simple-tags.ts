@@ -17,7 +17,6 @@ export function markTags(src: Source, startOffset: number = src.start, endOffset
 
         src.sliceAndBranch(start, end).kind = `element.${elementName}`;
         src.slice(openStart, openEnd).kind = `tag.${elementName}.open`;
-        src.sliceAndBranch(contentStart, contentEnd).kind = `element.${elementName}.body`;
         src.slice(closeStart, closeEnd).kind = `tag.${elementName}.close`;
         markTags(src, contentStart, contentEnd);
     }
