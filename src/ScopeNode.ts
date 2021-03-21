@@ -514,7 +514,7 @@ export class ScopeNode implements Ranged {
                 if (!ancestorMatch) return false;
             }
 
-            if (predicate.parent) return filter(node, predicate.parent);
+            if (predicate.parent && node.parent) return filter(node.parent, predicate.parent);
             else return true;
         };
 
