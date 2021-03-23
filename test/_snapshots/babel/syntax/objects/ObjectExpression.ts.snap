@@ -54,6 +54,20 @@ exports[`ObjectExpression with a computed property name 1`] = `
             ['', ' '],
             ['constant.numeric.decimal', '3']
         ],
+        ['punctuation.separator.comma', ','],
+        ['', '\\n    '],
+        ['meta.object.member', [
+            ['meta.object-literal.key', [
+                ['meta.array.literal', [
+                    ['meta.brace.square', '['],
+                    ['constant.numeric.decimal', '5'],
+                    ['meta.brace.square', ']']
+                ],
+                ['punctuation.separator.key-value', ':']
+            ],
+            ['', ' '],
+            ['variable.other.readwrite', 'five']
+        ],
         ['', '\\n'],
         ['punctuation.definition.block', '}']
     ],

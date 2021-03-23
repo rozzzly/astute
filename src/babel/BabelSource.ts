@@ -151,42 +151,38 @@ export class BabelSource extends Source<BabelSourceLang> {
         }
 
         const result = [];
-        let infRecDetectionCount = 0;
         let low = 0, mid, pMid;
         let high = this.ast.tokens.length - 1;
         let cToken: BabelToken | null = null, pToken: BabelToken | null = null;
-        // eslint-disable-next-line no-constant-condition
-        while (true) { /// TODO sloppy -- fix this
-            if (infRecDetectionCount++ > 1000) {
-                console.log(`infinite recursion detected: ${start}:${end}`);
+        do { /// TODO sloppy -- fix this
+            pMid = mid;
+            mid = Math.floor((high + low) / 2);
+            if (mid === pMid) {
+                this.warn(`found no babel tokens in range [${start}, ${end}]`);
                 return [];
             }
-            pMid = mid;
             pToken = cToken;
-            mid = Math.floor((high + low) / 2);
             cToken = this.ast.tokens[mid];
 
-            if (low >= high) {
-                mid = low;
-                /// TODO  what was purpose of next line? is it just cruft or broken logic gone unnoticed?
-                // cToken[high];
-                break; // in an infinite loop over the same element
-            } else if (cToken.start > start) { // cToken start too late, move cursor left
-                high = mid - 1;
-            } else if (cToken.end <= start) { // cToken ends too early, more cursor right
-                low = mid + 1;
-            } else if (cToken.start <= start && cToken.end > start) { // start is within this token; clean break
+            if (cToken.start >= start && cToken.end <= end) { // within range
                 break;
-            } else {
-                /// TODO revisit these next few lines; why am I testing pMid/mid for if either result has same outcome
-                console.log(mid, cToken, pMid, pToken);
-                if (pMid === mid) { // stuck on the same token, just choose it.
-                    break;
-                } else {
-                    break;
-                }
+            } else if (cToken.start > start) { // cNode start too late, move cursor left
+                high = mid - 1;
+            } else if (cToken.end <= start) { // cNode ends too early, more cursor right
+                low = mid + 1;
             }
-        }
+        } while (cToken.start > start || cToken.end <= start);
+
+        // get to the first (or last if in reverse mode) token in range
+        let nToken: BabelToken | undefined = cToken;
+        let nMid = mid;
+        do {
+            cToken = nToken;
+            mid = nMid;
+            if (reverse) nMid++;
+            else nMid--;
+            nToken = this.babelTokens[nMid];
+        } while (nToken && nToken.start >= start && nToken.end <= end);
 
         let count = 0;
         do {
@@ -194,13 +190,12 @@ export class BabelSource extends Source<BabelSourceLang> {
                 result.push(this.ast.tokens[mid]);
                 count++;
             }
-            cToken = this.ast.tokens[++mid];
-        } while (cToken && cToken.end <= end && (reverse || count < limit));
+            if (reverse) mid--;
+            else mid++;
+            cToken = this.ast.tokens[mid];
+        } while (cToken && cToken.start >= start && cToken.end <= end && count < limit);
 
-        return (reverse
-            ? result.reverse().slice(0, limit)
-            : result
-        );
+        return result;
     }
 
     findBabelTokensBetweenChildren(start: number, end: number, children: t.Node[]): BabelToken[];
