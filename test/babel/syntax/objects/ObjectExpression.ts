@@ -32,7 +32,7 @@ test('simple ObjectExpression with multiple properties', () => {
         'meta.object-literal.key',
         'meta.object.member',
         'meta.objectliteral',
-        // 'meta.var.expr',
+        'meta.var.expr',
         'source.ts'
     ]);
     expect(nodes[1].serialize()).toEqual([
@@ -47,7 +47,6 @@ test('simple ObjectExpression with multiple properties', () => {
             ['punctuation.separator.key-value', ':']
         ]
     ]);
-    expect(src.serialize()).toMatchSnapshot();
 });
 
 test('ObjectExpression with a computed property name', () => {

@@ -2,74 +2,106 @@
 
 exports[`ObjectExpression with a computed property name 1`] = `
 ['source.ts', [
-    ['', 'const '],
-    ['variable.other.constant', 'FOO'],
-    ['', ' = '],
-    ['variable.other.readwrite', 'Symbol'],
-    ['', '();\\nconst '],
-    ['variable.other.readwrite', 'bar'],
-    ['', ' = '],
-    ['string.quoted.single', [
-        ['punctuation.definition.string.start', '\\''],
-        ['', 'bar'],
-        ['punctuation.definition.string.end', '\\'']
+    ['meta.var.expr', [
+        ['storage.type', 'const'],
+        ['', ' '],
+        ['meta.var-single-variable.expr', [
+            ['meta.definition.variable', [
+                ['variable.other.constant', 'FOO']
+            ],
+            ['', ' ']
+        ],
+        ['keyword.operator.assignment', '='],
+        ['', ' '],
+        ['variable.other.readwrite', 'Symbol'],
+        ['', '()']
     ],
-    ['', ';\\nlet '],
-    ['variable.other.readwrite', 'x'],
-    ['', ' = '],
-    ['meta.objectliteral', [
-        ['punctuation.definition.block', '{'],
-        ['', '\\n    '],
-        ['meta.object.member', [
-            ['meta.object-literal.key', [
-                ['meta.array.literal', [
-                    ['meta.brace.square', '['],
-                    ['variable.other.constant', 'FOO'],
-                    ['meta.brace.square', ']']
-                ],
-                ['punctuation.separator.key-value', ':']
+    ['punctuation.terminator.statement', ';'],
+    ['', '\\n'],
+    ['meta.var.expr', [
+        ['storage.type', 'const'],
+        ['', ' '],
+        ['meta.var-single-variable.expr', [
+            ['meta.definition.variable', [
+                ['variable.other.readwrite', 'bar']
             ],
-            ['', ' '],
-            ['string.quoted.single', [
-                ['punctuation.definition.string.start', '\\''],
-                ['', 'bar'],
-                ['punctuation.definition.string.end', '\\'']
-            ]
+            ['', ' ']
         ],
-        ['punctuation.separator.comma', ','],
-        ['', '\\n    '],
-        ['meta.object.member', [
-            ['meta.object-literal.key', [
-                ['meta.array.literal', [
-                    ['meta.brace.square', '['],
-                    ['variable.other.readwrite', 'bar'],
-                    ['', ' '],
-                    ['keyword.operator.arithmetic', '+'],
-                    ['', ' '],
-                    ['constant.numeric.decimal', '4'],
-                    ['meta.brace.square', ']']
-                ],
-                ['punctuation.separator.key-value', ':']
+        ['keyword.operator.assignment', '='],
+        ['', ' '],
+        ['string.quoted.single', [
+            ['punctuation.definition.string.start', '\\''],
+            ['', 'bar'],
+            ['punctuation.definition.string.end', '\\'']
+        ]
+    ],
+    ['punctuation.terminator.statement', ';'],
+    ['', '\\n'],
+    ['meta.var.expr', [
+        ['storage.type', 'let'],
+        ['', ' '],
+        ['meta.var-single-variable.expr', [
+            ['meta.definition.variable', [
+                ['variable.other.readwrite', 'x']
             ],
-            ['', ' '],
-            ['constant.numeric.decimal', '3']
+            ['', ' ']
         ],
-        ['punctuation.separator.comma', ','],
-        ['', '\\n    '],
-        ['meta.object.member', [
-            ['meta.object-literal.key', [
-                ['meta.array.literal', [
-                    ['meta.brace.square', '['],
-                    ['constant.numeric.decimal', '5'],
-                    ['meta.brace.square', ']']
+        ['keyword.operator.assignment', '='],
+        ['', ' '],
+        ['meta.objectliteral', [
+            ['punctuation.definition.block', '{'],
+            ['', '\\n    '],
+            ['meta.object.member', [
+                ['meta.object-literal.key', [
+                    ['meta.array.literal', [
+                        ['meta.brace.square', '['],
+                        ['variable.other.constant', 'FOO'],
+                        ['meta.brace.square', ']']
+                    ],
+                    ['punctuation.separator.key-value', ':']
                 ],
-                ['punctuation.separator.key-value', ':']
+                ['', ' '],
+                ['string.quoted.single', [
+                    ['punctuation.definition.string.start', '\\''],
+                    ['', 'bar'],
+                    ['punctuation.definition.string.end', '\\'']
+                ]
             ],
-            ['', ' '],
-            ['variable.other.readwrite', 'five']
-        ],
-        ['', '\\n'],
-        ['punctuation.definition.block', '}']
+            ['punctuation.separator.comma', ','],
+            ['', '\\n    '],
+            ['meta.object.member', [
+                ['meta.object-literal.key', [
+                    ['meta.array.literal', [
+                        ['meta.brace.square', '['],
+                        ['variable.other.readwrite', 'bar'],
+                        ['', ' '],
+                        ['keyword.operator.arithmetic', '+'],
+                        ['', ' '],
+                        ['constant.numeric.decimal', '4'],
+                        ['meta.brace.square', ']']
+                    ],
+                    ['punctuation.separator.key-value', ':']
+                ],
+                ['', ' '],
+                ['constant.numeric.decimal', '3']
+            ],
+            ['punctuation.separator.comma', ','],
+            ['', '\\n    '],
+            ['meta.object.member', [
+                ['meta.object-literal.key', [
+                    ['meta.array.literal', [
+                        ['meta.brace.square', '['],
+                        ['constant.numeric.decimal', '5'],
+                        ['meta.brace.square', ']']
+                    ],
+                    ['punctuation.separator.key-value', ':']
+                ],
+                ['', ' '],
+                ['variable.other.readwrite', 'five']
+            ],
+            ['', '\\n'],
+            ['punctuation.definition.block', '}']
+        ]
     ],
     ['', '\\n']
 ]
@@ -78,90 +110,59 @@ exports[`ObjectExpression with a computed property name 1`] = `
 
 exports[`ObjectExpression with a shorthand property 1`] = `
 ['source.ts', [
-    ['', 'const '],
-    ['variable.other.readwrite', 'bar'],
-    ['', ' = '],
-    ['string.quoted.single', [
-        ['punctuation.definition.string.start', '\\''],
-        ['', 'bar'],
-        ['punctuation.definition.string.end', '\\'']
+    ['meta.var.expr', [
+        ['storage.type', 'const'],
+        ['', ' '],
+        ['meta.var-single-variable.expr', [
+            ['meta.definition.variable', [
+                ['variable.other.readwrite', 'bar']
+            ],
+            ['', ' ']
+        ],
+        ['keyword.operator.assignment', '='],
+        ['', ' '],
+        ['string.quoted.single', [
+            ['punctuation.definition.string.start', '\\''],
+            ['', 'bar'],
+            ['punctuation.definition.string.end', '\\'']
+        ]
     ],
-    ['', ';\\nlet '],
-    ['variable.other.readwrite', 'x'],
-    ['', ' = '],
-    ['meta.objectliteral', [
-        ['punctuation.definition.block', '{'],
-        ['', '\\n    '],
-        ['meta.object.member', [
-            ['meta.object-literal.key', [
-                ['', 'foo'],
-                ['punctuation.separator.key-value', ':']
+    ['punctuation.terminator.statement', ';'],
+    ['', '\\n'],
+    ['meta.var.expr', [
+        ['storage.type', 'let'],
+        ['', ' '],
+        ['meta.var-single-variable.expr', [
+            ['meta.definition.variable', [
+                ['variable.other.readwrite', 'x']
             ],
-            ['', ' '],
-            ['string.quoted.single', [
-                ['punctuation.definition.string.start', '\\''],
-                ['', 'foo'],
-                ['punctuation.definition.string.end', '\\'']
-            ]
+            ['', ' ']
         ],
-        ['punctuation.separator.comma', ','],
-        ['', '\\n    '],
-        ['meta.object.member', [
-            ['variable.other.readwrite', 'bar']
-        ],
-        ['', '\\n'],
-        ['punctuation.definition.block', '}']
-    ],
-    ['', '\\n']
-]
-
-`;
-
-exports[`simple ObjectExpression with multiple properties 1`] = `
-['source.ts', [
-    ['', 'let '],
-    ['variable.other.readwrite', 'x'],
-    ['', ' = '],
-    ['meta.objectliteral', [
-        ['punctuation.definition.block', '{'],
-        ['', '\\n    '],
-        ['meta.object.member', [
-            ['meta.object-literal.key', [
-                ['', 'foo'],
-                ['punctuation.separator.key-value', ':']
+        ['keyword.operator.assignment', '='],
+        ['', ' '],
+        ['meta.objectliteral', [
+            ['punctuation.definition.block', '{'],
+            ['', '\\n    '],
+            ['meta.object.member', [
+                ['meta.object-literal.key', [
+                    ['', 'foo'],
+                    ['punctuation.separator.key-value', ':']
+                ],
+                ['', ' '],
+                ['string.quoted.single', [
+                    ['punctuation.definition.string.start', '\\''],
+                    ['', 'foo'],
+                    ['punctuation.definition.string.end', '\\'']
+                ]
             ],
-            ['', ' '],
-            ['string.quoted.single', [
-                ['punctuation.definition.string.start', '\\''],
-                ['', 'bar'],
-                ['punctuation.definition.string.end', '\\'']
-            ]
-        ],
-        ['punctuation.separator.comma', ','],
-        ['', '\\n    '],
-        ['meta.object.member', [
-            ['meta.object-literal.key', [
-                ['', 'one'],
-                ['punctuation.separator.key-value', ':']
+            ['punctuation.separator.comma', ','],
+            ['', '\\n    '],
+            ['meta.object.member', [
+                ['variable.other.readwrite', 'bar']
             ],
-            ['', ' 2']
-        ],
-        ['punctuation.separator.comma', ','],
-        ['', '\\n    '],
-        ['meta.object.member', [
-            ['meta.object-literal.key', [
-                ['', '7'],
-                ['punctuation.separator.key-value', ':']
-            ],
-            ['', ' '],
-            ['string.quoted.single', [
-                ['punctuation.definition.string.start', '\\''],
-                ['', 'seven'],
-                ['punctuation.definition.string.end', '\\'']
-            ]
-        ],
-        ['', '\\n'],
-        ['punctuation.definition.block', '}']
+            ['', '\\n'],
+            ['punctuation.definition.block', '}']
+        ]
     ],
     ['', '\\n']
 ]
@@ -170,26 +171,35 @@ exports[`simple ObjectExpression with multiple properties 1`] = `
 
 exports[`simple ObjectExpression with single property 1`] = `
 ['source.ts', [
-    ['', 'let '],
-    ['variable.other.readwrite', 'x'],
-    ['', ' = '],
-    ['meta.objectliteral', [
-        ['punctuation.definition.block', '{'],
-        ['', '\\n    '],
-        ['meta.object.member', [
-            ['meta.object-literal.key', [
-                ['', 'foo'],
-                ['punctuation.separator.key-value', ':']
+    ['meta.var.expr', [
+        ['storage.type', 'let'],
+        ['', ' '],
+        ['meta.var-single-variable.expr', [
+            ['meta.definition.variable', [
+                ['variable.other.readwrite', 'x']
             ],
-            ['', ' '],
-            ['string.quoted.single', [
-                ['punctuation.definition.string.start', '\\''],
-                ['', 'bar'],
-                ['punctuation.definition.string.end', '\\'']
-            ]
+            ['', ' ']
         ],
-        ['', '\\n'],
-        ['punctuation.definition.block', '}']
+        ['keyword.operator.assignment', '='],
+        ['', ' '],
+        ['meta.objectliteral', [
+            ['punctuation.definition.block', '{'],
+            ['', '\\n    '],
+            ['meta.object.member', [
+                ['meta.object-literal.key', [
+                    ['', 'foo'],
+                    ['punctuation.separator.key-value', ':']
+                ],
+                ['', ' '],
+                ['string.quoted.single', [
+                    ['punctuation.definition.string.start', '\\''],
+                    ['', 'bar'],
+                    ['punctuation.definition.string.end', '\\'']
+                ]
+            ],
+            ['', '\\n'],
+            ['punctuation.definition.block', '}']
+        ]
     ],
     ['', '\\n']
 ]
