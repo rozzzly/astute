@@ -35,7 +35,7 @@ export default function primitiveVisitors(this: BabelSource): TraverseOptions {
 
             const { head, tail } = literal.slice(node.start + 1, node.end - 1, true);
             dumbAssert<ScopeNode>(head); // guaranteed safe because the +1, -1 offsets on the line above
-            dumbAssert<ScopeNode>(tail); // ensure that its a center slice so there will be a head and tail
+            dumbAssert<ScopeNode>(tail); // ensures that its a center slice so there will be a head and tail
             head.kind = 'punctuation.definition.string.start';
             tail.kind = 'punctuation.definition.string.end';
         },

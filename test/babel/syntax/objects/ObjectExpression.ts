@@ -9,7 +9,25 @@ test('simple ObjectExpression with single property', () => {
         }
     `, 'ts');
     src.tokenize();
-    expect(src.serialize()).toMatchSnapshot();
+    const [ node ] = src.search({ kind: 'meta.objectliteral' });
+    expect(node.serialize()).toEqual(['meta.objectliteral', [
+        ['punctuation.definition.block', '{'],
+        ['', '\n    '],
+        ['meta.object.member', [
+            ['meta.object-literal.key', [
+                ['', 'foo'],
+                ['punctuation.separator.key-value', ':']
+            ]],
+            ['', ' '],
+            ['string.quoted.single', [
+                ['punctuation.definition.string.start', '\''],
+                ['', 'bar'],
+                ['punctuation.definition.string.end', '\'']
+            ]]
+        ]],
+        ['', '\n'],
+        ['punctuation.definition.block', '}']
+    ]]);
 });
 
 test('simple ObjectExpression with multiple properties', () => {
@@ -72,5 +90,22 @@ test('ObjectExpression with a shorthand property', () => {
         }
     `, 'ts');
     src.tokenize();
-    expect(src.serialize()).toMatchSnapshot();
+    const nodes = src.search({ kind: 'meta.object.member' });
+    expect(nodes.map(n => n.serialize())).toEqual([
+        ['meta.object.member', [
+            ['meta.object-literal.key', [
+                ['', 'foo'],
+                ['punctuation.separator.key-value', ':']
+            ]],
+            ['', ' '],
+            ['string.quoted.single', [
+                ['punctuation.definition.string.start', '\''],
+                ['', 'foo'],
+                ['punctuation.definition.string.end', '\'']
+            ]]
+        ]],
+        ['meta.object.member', [
+            ['variable.other.readwrite', 'bar']
+        ]]
+    ]);
 });
