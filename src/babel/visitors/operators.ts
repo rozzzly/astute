@@ -1,4 +1,4 @@
-import { TraverseOptions } from '@babel/traverse';
+import { TraverseOptions, NodePath } from '@babel/traverse';
 import { oneLine } from 'common-tags';
 import { castAsRanged } from '../../utils';
 import BabelSource from '../BabelSource';
@@ -12,8 +12,7 @@ const binaryOperatorTokens = [
 export default function operatorVisitors(this: BabelSource): TraverseOptions {
     return {
         BinaryExpression: path => {
-            const { node } = path;
-            castAsRanged(node);
+            const { node } = castAsRanged(path);
 
             let kind = '';
             switch (node.operator) {
@@ -53,8 +52,6 @@ export default function operatorVisitors(this: BabelSource): TraverseOptions {
                     kind =  'keyword.operator.comparison';
                     break;
             }
-            castAsRanged(node.left);
-            castAsRanged(node.right);
             const [ token ] = this.findBabelTokens(node.left.end, node.right.start);
             if (!token || !binaryOperatorTokens.includes(token.value)) {
                 throw new Error(oneLine`
@@ -64,8 +61,8 @@ export default function operatorVisitors(this: BabelSource): TraverseOptions {
                 this.slice(token).kind = kind;
             }
         },
-        UnaryExpression: ({ node }) => {
-            castAsRanged(node);
+        UnaryExpression: path => {
+            const { node } = castAsRanged(path);
             let kind = '';
             switch (node.operator) {
                 case '-':
@@ -95,8 +92,8 @@ export default function operatorVisitors(this: BabelSource): TraverseOptions {
             }
             this.slice(node).kind = kind;
         },
-        UpdateExpression: ({ node }) => {
-            castAsRanged(node);
+        UpdateExpression: path => {
+            const { node } = castAsRanged(path);
             let kind = '';
             switch (node.operator) {
                 case '++':

@@ -14,18 +14,18 @@ export const dumbAssert: <T>(value: unknown) => asserts value is T = (value) => 
  * that's brittle and hacky.
  *
  * Also considered changing the signatures of some `ScopeNode`'s shorthand overloads such as
- * `findAndSlice<R extends Range>(range: R): ScopeNode` to something like:
- * `findAndSlice<R extends RangeWeak>(range: R): ScopeNode` where `RangeWeak` has
+ * `slice<R extends Ranged>(range: R): ScopeNode` to something like:
+ * `slice<R extends RangedWeak>(range: R): ScopeNode` where `RangedWeak` has
  * `.start` and `.end` as `number | null`. However, this falls short when the `start` and
  * `end` params need to be explicitly passed (eg: when using offsets such as `.slice(node.start + 1, node.end - 1)`).
  *
  * The more annoying, but maintainable way is to cast variables whenever they're in scope. For example:
  * ```ts
  *  parse(srcText, {
- *      StringLiteral: ({ node }) => {
- *          this.findAndSlice(node); // Assignability error because `number | null` cannot be assigned to `number`
+ *      StringLiteral: path => {
+ *          this.findAndSlice(path.node); // Assignability error because `number | null` cannot be assigned to `number`
  *          /// so the solution is to do this:
- *          castAsRanged(node); // narrows from `number | null` to `number`
+ *          const { node } = castAsRanged(path); // narrows from `number | null` to `number`
  *          this.findAndSlice(node); // no error
  *      }
  * })
@@ -33,12 +33,41 @@ export const dumbAssert: <T>(value: unknown) => asserts value is T = (value) => 
  * Will evaluate using a babel plugin such as `babel-plugin-strip-function-call` to strip these
  * calls from emitted code because they're just NOOPs at runtime.
  */
-export const castAsRanged: <R>(value: unknown) => asserts value is (
+export const shallowCastAsRanged: <R>(value: unknown) => asserts value is (
     & Omit<R, 'start' | 'end'>
     & Ranged
 ) = (value) => {};
+// ) = (value) => {};
+export const castAsRanged: <T>(value: T) => CastAsRanged<T> = (value) => value as any;
 
-
+export type Primitives = (
+    | number
+    | string
+    | boolean
+    | symbol
+    | undefined
+    | null
+    | void
+    | ((...args: any[]) => any)
+    | Date
+);
+export type CastAsRanged<T> = (
+    (T extends object
+        ? DeepCastObjectAsRanged<T>
+        : T
+    )
+);
+export type DeepCastObjectAsRanged<T> = (
+    {[K in keyof T]: T[K] extends Primitives
+        ? (K extends 'start' | 'end'
+            ? number
+            : T[K]
+        ) : (T[K] extends Array<infer U>
+            ? Array<CastAsRanged<U>>
+            : CastAsRanged<T[K]>
+        )
+    }
+);
 /**
  * Runtime check/typeguard to determine if value is a RegExp
  */

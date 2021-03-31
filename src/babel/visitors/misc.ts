@@ -6,8 +6,7 @@ import { handlePossibleTerminator } from '../helpers';
 export default function miscVisitors(this: BabelSource): TraverseOptions {
     return {
         ImportDeclaration: path => {
-            castAsRanged(path.node);
-            const { node } = path;
+            const { node } = castAsRanged(path);
             const end = handlePossibleTerminator(this, path);
             const importDecl = this.sliceAndBranch(node.start, end);
             importDecl.kind = 'meta.import';
@@ -46,8 +45,7 @@ export default function miscVisitors(this: BabelSource): TraverseOptions {
             }
         },
         RestElement: path => {
-            castAsRanged(path.node);
-            const { node } = path;
+            const { node } = castAsRanged(path);
             const [ restToken ] = this.findBabelTokens(node.start, node.end, bToken => (
                 bToken.type.label === '...'
             ), 1);

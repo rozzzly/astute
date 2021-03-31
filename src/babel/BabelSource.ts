@@ -4,7 +4,7 @@ import Source from '../Source';
 import traverse from '@babel/traverse';
 import createVisitors from './visitors';
 import { Ranged } from '../ScopeNode';
-import { castAsRanged, dumbAssert } from '../utils';
+import { shallowCastAsRanged, dumbAssert } from '../utils';
 
 /**
  * Babel's type definitions have tokens typed as `Array<any> | null` which is useless.
@@ -237,7 +237,7 @@ export class BabelSource extends Source<BabelSourceLang> {
         return this.findBabelTokens(start, end, bToken => {
             if (predicate && !predicate(bToken)) return false;
             for (const child of children) {
-                castAsRanged(child);
+                shallowCastAsRanged(child);
                 if (child && bToken.start >= child.start && bToken.end <= child.end) {
                     return false;
                 }

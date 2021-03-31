@@ -5,10 +5,12 @@ import operatorVisitors from './operators';
 import miscVisitors from './misc';
 import identifierVisitors from './identifiers';
 import objectVisitors from './objects';
+import expressionVisitors from './expressions';
 
 export function createVisitors(this: BabelSource): TraverseOptions {
     return [
         primitiveVisitors,
+        expressionVisitors,
         operatorVisitors,
         identifierVisitors,
         objectVisitors,

@@ -8,8 +8,7 @@ import { oneLine } from 'common-tags';
 export default function objectVisitors(this: BabelSource): TraverseOptions {
     return {
         ObjectExpression: path => {
-            const { node } = path;
-            castAsRanged(node);
+            const { node } = castAsRanged(path);
             const literal = this.sliceAndBranch(node);
             literal.kind = 'meta.objectliteral';
             annotateBlockPunctuation(this, path);
@@ -19,8 +18,7 @@ export default function objectVisitors(this: BabelSource): TraverseOptions {
             }
         },
         ObjectProperty: path => {
-            castAsRanged(path.node);
-            const { node, parent, parentPath } = path;
+            const { node, parent, parentPath } = castAsRanged(path);
 
             if (t.isObjectPattern(parent)) {
                 this.warn('Unhandled ObjectProperty in an ObjectPattern', { node, path, parent });
@@ -33,8 +31,6 @@ export default function objectVisitors(this: BabelSource): TraverseOptions {
                     // scopes beyond what it gets from the Identifer visitor therefor when one is detected, we're done with that node
                     return;
                 }
-                castAsRanged(node.key);
-                castAsRanged(node.value);
                 const [ separator ] = this.findBabelTokens(node.key.end, node.value.start, bToken => (
                     bToken.type.label === ':'
                 ), 1);

@@ -16,8 +16,8 @@ declare module '@babel/types' {
 
 export default function primitiveVisitors(this: BabelSource): TraverseOptions {
     return {
-        StringLiteral: ({ node }) => {
-            castAsRanged(node);
+        StringLiteral: path => {
+            const { node } = castAsRanged(path);
             const literal = this.sliceAndBranch(node);
 
             if (literal.length < 2 || literal.text[0] !== literal.text[literal.text.length - 1]) {
@@ -39,35 +39,33 @@ export default function primitiveVisitors(this: BabelSource): TraverseOptions {
             head.kind = 'punctuation.definition.string.start';
             tail.kind = 'punctuation.definition.string.end';
         },
-        TSStringKeyword: ({ node }) => {
-            castAsRanged(node);
+        TSStringKeyword: path => {
+            const { node } = castAsRanged(path);
             this.slice(node).kind = 'support.type.primitive';
         },
-        TSNumberKeyword: ({ node }) => {
-            castAsRanged<Ranged>(node);
+        TSNumberKeyword: path => {
+            const { node } = castAsRanged(path);
             this.slice(node).kind = 'support.type.primitive';
         },
-        TSSymbolKeyword: ({ node }) => {
-            castAsRanged(node);
+        TSSymbolKeyword: path => {
+            const { node } = castAsRanged(path);
             this.slice(node).kind = 'support.type.primitive';
         },
-        TSBooleanKeyword: ({ node }) => {
-            castAsRanged(node);
+        TSBooleanKeyword: path => {
+            const { node } = castAsRanged(path);
             this.slice(node).kind = 'support.type.primitive';
         },
-        BigIntLiteral: ({ node }) => {
-            castAsRanged(node);
+        BigIntLiteral: path => {
+            const { node } = castAsRanged(path);
             const literal = this.sliceAndBranch(node);
             literal.kind = 'constant.numeric.decimal';
             literal.slice(node.end - 1, node.end).kind = 'storage.type.numeric.bigint';
         },
         NumericLiteral: path => {
-            const { node, parent } = path;
+            const { node, parent } = castAsRanged(path);
             if (t.isObjectProperty(parent) && !parent.computed) {
                 return; // noop; don't tag normal object literal keys as numbers unless its (the only component of)u a computer property
             }
-
-            castAsRanged(node);
             // this.findAndSlice(node).kind = 'constant.numeric.decimal';
             let kind = 'constant.numeric.decimal';
             const lower = node.extra.raw[1] ? node.extra.raw[1].toLowerCase() : '';
@@ -88,10 +86,9 @@ export default function primitiveVisitors(this: BabelSource): TraverseOptions {
             }
         },
         BooleanLiteral: path => {
-            const { node } = path;
-            castAsRanged(node);
+            const { node, parent } = castAsRanged(path);
             const boolToken = this.slice(node);
-            if (path.parent && t.isTSLiteralType(path.parent)) {
+            if (path.parent && t.isTSLiteralType(parent)) {
                 boolToken.kind = 'support.type.builtin';
             } else {
                 if (node.value === true) {

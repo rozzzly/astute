@@ -51,9 +51,11 @@ export function annotateBlockPunctuation<T extends t.Node>(src: BabelSource, pat
     }
 }
 
-export function handlePossibleTerminator<T extends t.Node>(src: BabelSource, path: NodePath<T>): number {
-    castAsRanged(path.node);
-    const [ terminator ] = src.findBabelTokens(path.node.end - 1, path.node.end, bToken => (
+export function handlePossibleTerminator<T extends t.Node>(src: BabelSource, path: NodePath<T>): number;
+export function handlePossibleTerminator(src: BabelSource, path: NodePath): number {
+    // drop generic for signature of actual function because generic does not play nice with deepCastAsRanged
+    const { node } = castAsRanged(path);
+    const [ terminator ] = src.findBabelTokens(node.end - 1, node.end, bToken => (
         bToken.type.label === ';'
     ));
     if (terminator) {
@@ -61,8 +63,49 @@ export function handlePossibleTerminator<T extends t.Node>(src: BabelSource, pat
         terminatorNode.kind = 'punctuation.terminator.statement';
         return terminatorNode.start;
     } else {
-        return path.node.end;
+        return node.end;
     }
+}
+
+
+/**
+ * tmlanguage considers the `export` keyword to be a child of exported item's declaration body
+ * For example, given:
+ * ````ts
+ * export interface Foo {
+ *     // ...
+ * }
+ * ````
+ * The scope for the `export` keyword resolves to `source > meta.interface > keyword.control.export` wherein `keyword.control.export`
+ * is a child of `meta.interface`. This is conflicts with the AST from Babel which considers the interface declaration
+ * to be a child of the export declaration, ie: `Program > ExportNamedDeclaration > TSInterfaceDeclaration`
+ *
+ * The simplest way to handle this is to have the exported item declarations (interfaces, classes, variables, etc) quickly check
+ * to see if their parent is an export and if so to include it in their range
+ */
+export function handlePossibleNamedExport<T extends t.Node>(src: BabelSource, path: NodePath<T>): [number, () => void];
+export function handlePossibleNamedExport(src: BabelSource, path: NodePath): [number, () => void] {
+    // drop generic for signature of actual function because generic does not play nice with deepCastAsRanged
+
+    const { node, parent } = castAsRanged(path);
+    let start = node.start;
+    let isExported = false;
+    if (path.parent && t.isExportNamedDeclaration(parent)) {
+        start = parent.start;
+        isExported = true;
+    }
+    return [
+        start,
+        () => {
+            if (isExported) {
+                const [ exportKeyword ] = src.findBabelTokens(start, node.end, (token) => (
+                    token.type.label === 'export' && token.value === 'export'
+                ), 1);
+                const exportKeywordToken = src.slice(exportKeyword);
+                exportKeywordToken.kind = 'keyword.control.export';
+            }
+        }
+    ];
 }
 
 export const looksLikeConst = (identifier: string): boolean => identifier === identifier.toUpperCase();
