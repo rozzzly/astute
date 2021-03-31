@@ -15,7 +15,7 @@ exports[`aliased default import 1`] = `
             ['variable.other.readwrite.alias', 'FooBar'],
             ['', ' '],
             ['punctuation.definition.block', '}']
-        ],
+        ]],
         ['', ' '],
         ['punctuation.definition.block', 'from'],
         ['', ' '],
@@ -23,11 +23,11 @@ exports[`aliased default import 1`] = `
             ['punctuation.definition.string.start', '\\''],
             ['', './FooBar'],
             ['punctuation.definition.string.end', '\\'']
-        ]
-    ],
+        ]]
+    ]],
     ['punctuation.terminator.statement', ';'],
     ['', '\\n']
-]
+]]
 
 `;
 
@@ -46,7 +46,7 @@ exports[`aliased import 1`] = `
             ['variable.other.readwrite.alias', 'Bar'],
             ['', ' '],
             ['punctuation.definition.block', '}']
-        ],
+        ]],
         ['', ' '],
         ['punctuation.definition.block', 'from'],
         ['', ' '],
@@ -54,11 +54,11 @@ exports[`aliased import 1`] = `
             ['punctuation.definition.string.start', '\\''],
             ['', './FooBar'],
             ['punctuation.definition.string.end', '\\'']
-        ]
-    ],
+        ]]
+    ]],
     ['punctuation.terminator.statement', ';'],
     ['', '\\n']
-]
+]]
 
 `;
 
@@ -75,11 +75,11 @@ exports[`default import 1`] = `
             ['punctuation.definition.string.start', '\\''],
             ['', './FooBar'],
             ['punctuation.definition.string.end', '\\'']
-        ]
-    ],
+        ]]
+    ]],
     ['punctuation.terminator.statement', ';'],
     ['', '\\n']
-]
+]]
 
 `;
 
@@ -111,7 +111,7 @@ exports[`mixed default, named, aliased, and aliased default imports 1`] = `
             ['variable.other.readwrite.alias', 'BarFoo'],
             ['', ' '],
             ['punctuation.definition.block', '}']
-        ],
+        ]],
         ['', ' '],
         ['punctuation.definition.block', 'from'],
         ['', ' '],
@@ -119,11 +119,11 @@ exports[`mixed default, named, aliased, and aliased default imports 1`] = `
             ['punctuation.definition.string.start', '\\''],
             ['', './FooBar'],
             ['punctuation.definition.string.end', '\\'']
-        ]
-    ],
+        ]]
+    ]],
     ['punctuation.terminator.statement', ';'],
     ['', '\\n']
-]
+]]
 
 `;
 
@@ -144,7 +144,7 @@ exports[`mixed named and default import 1`] = `
             ['variable.other.readwrite.alias', 'Bar'],
             ['', ' '],
             ['punctuation.definition.block', '}']
-        ],
+        ]],
         ['', ' '],
         ['punctuation.definition.block', 'from'],
         ['', ' '],
@@ -152,11 +152,11 @@ exports[`mixed named and default import 1`] = `
             ['punctuation.definition.string.start', '\\''],
             ['', './FooBar'],
             ['punctuation.definition.string.end', '\\'']
-        ]
-    ],
+        ]]
+    ]],
     ['punctuation.terminator.statement', ';'],
     ['', '\\n']
-]
+]]
 
 `;
 
@@ -174,7 +174,7 @@ exports[`named imports 1`] = `
             ['variable.other.readwrite.alias', 'Bar'],
             ['', ' '],
             ['punctuation.definition.block', '}']
-        ],
+        ]],
         ['', ' '],
         ['punctuation.definition.block', 'from'],
         ['', ' '],
@@ -182,11 +182,11 @@ exports[`named imports 1`] = `
             ['punctuation.definition.string.start', '\\''],
             ['', './FooBar'],
             ['punctuation.definition.string.end', '\\'']
-        ]
-    ],
+        ]]
+    ]],
     ['punctuation.terminator.statement', ';'],
     ['', '\\n']
-]
+]]
 
 `;
 
@@ -207,10 +207,10 @@ exports[`namespace import 1`] = `
             ['punctuation.definition.string.start', '\\''],
             ['', './FooBar'],
             ['punctuation.definition.string.end', '\\'']
-        ]
-    ],
+        ]]
+    ]],
     ['punctuation.terminator.statement', ';'],
     ['', '\\n']
-]
+]]
 
 `;

@@ -5,7 +5,11 @@ const templateQuoteRegExp = /(?<!\\)`/g;
 const serializer = ([kind, content], indent = 0, insertComma = false) => {
     const parts = [' '.repeat(indent) + `['${kind}', `];
     if (typeof content === 'string') {
-        parts.push(`'${content.replace(newLineRegExp, String.raw`\n`).replace(singleQuoteRegExp,'\\\'').replace(templateQuoteRegExp, '\\`')}']`);
+        parts.push(`'${(content
+            .replace(newLineRegExp, String.raw`\n`)
+            .replace(singleQuoteRegExp, String.raw`\'`)
+            .replace(templateQuoteRegExp, String.raw`\``)
+        )}']`);
         if (insertComma) parts.push(',');
         parts.push('\n');
         return parts.join('');
@@ -14,7 +18,7 @@ const serializer = ([kind, content], indent = 0, insertComma = false) => {
         for (let i = 0; i < content.length; i++) {
             parts.push(serializer(content[i], indent + 4, i !== content.length - 1));
         }
-        parts.push(' '.repeat(indent) + ']');
+        parts.push(' '.repeat(indent) + ']]');
         if (insertComma) parts.push(',');
         parts.push('\n');
         return parts.join('');

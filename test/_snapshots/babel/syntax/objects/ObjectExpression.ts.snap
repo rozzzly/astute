@@ -8,14 +8,14 @@ exports[`ObjectExpression with a computed property name 1`] = `
         ['meta.var-single-variable.expr', [
             ['meta.definition.variable', [
                 ['variable.other.constant', 'FOO']
-            ],
+            ]],
             ['', ' ']
-        ],
+        ]],
         ['keyword.operator.assignment', '='],
         ['', ' '],
         ['variable.other.readwrite', 'Symbol'],
         ['', '()']
-    ],
+    ]],
     ['punctuation.terminator.statement', ';'],
     ['', '\\n'],
     ['meta.var.expr', [
@@ -24,17 +24,17 @@ exports[`ObjectExpression with a computed property name 1`] = `
         ['meta.var-single-variable.expr', [
             ['meta.definition.variable', [
                 ['variable.other.readwrite', 'bar']
-            ],
+            ]],
             ['', ' ']
-        ],
+        ]],
         ['keyword.operator.assignment', '='],
         ['', ' '],
         ['string.quoted.single', [
             ['punctuation.definition.string.start', '\\''],
             ['', 'bar'],
             ['punctuation.definition.string.end', '\\'']
-        ]
-    ],
+        ]]
+    ]],
     ['punctuation.terminator.statement', ';'],
     ['', '\\n'],
     ['meta.var.expr', [
@@ -43,9 +43,9 @@ exports[`ObjectExpression with a computed property name 1`] = `
         ['meta.var-single-variable.expr', [
             ['meta.definition.variable', [
                 ['variable.other.readwrite', 'x']
-            ],
+            ]],
             ['', ' ']
-        ],
+        ]],
         ['keyword.operator.assignment', '='],
         ['', ' '],
         ['meta.objectliteral', [
@@ -57,16 +57,16 @@ exports[`ObjectExpression with a computed property name 1`] = `
                         ['meta.brace.square', '['],
                         ['variable.other.constant', 'FOO'],
                         ['meta.brace.square', ']']
-                    ],
+                    ]],
                     ['punctuation.separator.key-value', ':']
-                ],
+                ]],
                 ['', ' '],
                 ['string.quoted.single', [
                     ['punctuation.definition.string.start', '\\''],
                     ['', 'bar'],
                     ['punctuation.definition.string.end', '\\'']
-                ]
-            ],
+                ]]
+            ]],
             ['punctuation.separator.comma', ','],
             ['', '\\n    '],
             ['meta.object.member', [
@@ -79,12 +79,12 @@ exports[`ObjectExpression with a computed property name 1`] = `
                         ['', ' '],
                         ['constant.numeric.decimal', '4'],
                         ['meta.brace.square', ']']
-                    ],
+                    ]],
                     ['punctuation.separator.key-value', ':']
-                ],
+                ]],
                 ['', ' '],
                 ['constant.numeric.decimal', '3']
-            ],
+            ]],
             ['punctuation.separator.comma', ','],
             ['', '\\n    '],
             ['meta.object.member', [
@@ -93,17 +93,17 @@ exports[`ObjectExpression with a computed property name 1`] = `
                         ['meta.brace.square', '['],
                         ['constant.numeric.decimal', '5'],
                         ['meta.brace.square', ']']
-                    ],
+                    ]],
                     ['punctuation.separator.key-value', ':']
-                ],
+                ]],
                 ['', ' '],
                 ['variable.other.readwrite', 'five']
-            ],
+            ]],
             ['', '\\n'],
             ['punctuation.definition.block', '}']
-        ]
-    ],
+        ]]
+    ]],
     ['', '\\n']
-]
+]]
 
 `;
