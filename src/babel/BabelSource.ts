@@ -198,13 +198,13 @@ export class BabelSource extends Source<BabelSourceLang> {
         return result;
     }
 
-    findBabelTokensBetweenChildren(start: number, end: number, children: t.Node[]): BabelToken[];
-    findBabelTokensBetweenChildren(start: number, end: number, children: t.Node[], suppressWarning: boolean): BabelToken[];
-    findBabelTokensBetweenChildren(start: number, end: number, children: t.Node[], predicate: BabelTokenFilterPredicate): BabelToken[];
-    findBabelTokensBetweenChildren(start: number, end: number, children: t.Node[], predicate: BabelTokenFilterPredicate, suppressWarning: boolean): BabelToken[];
-    findBabelTokensBetweenChildren(start: number, end: number, children: t.Node[], predicate: BabelTokenFilterPredicate, limit: number): BabelToken[];
-    findBabelTokensBetweenChildren(start: number, end: number, children: t.Node[], predicate: BabelTokenFilterPredicate, limit: number, suppressWarning: boolean): BabelToken[];
-    findBabelTokensBetweenChildren(start: number, end: number, children: t.Node[], ...args: any[]): BabelToken[] {
+    findBabelTokensBetweenChildren(start: number, end: number, children: (t.Node | null)[]): BabelToken[];
+    findBabelTokensBetweenChildren(start: number, end: number, children: (t.Node | null)[], suppressWarning: boolean): BabelToken[];
+    findBabelTokensBetweenChildren(start: number, end: number, children: (t.Node | null)[], predicate: BabelTokenFilterPredicate): BabelToken[];
+    findBabelTokensBetweenChildren(start: number, end: number, children: (t.Node | null)[], predicate: BabelTokenFilterPredicate, suppressWarning: boolean): BabelToken[];
+    findBabelTokensBetweenChildren(start: number, end: number, children: (t.Node | null)[], predicate: BabelTokenFilterPredicate, limit: number): BabelToken[];
+    findBabelTokensBetweenChildren(start: number, end: number, children: (t.Node | null)[], predicate: BabelTokenFilterPredicate, limit: number, suppressWarning: boolean): BabelToken[];
+    findBabelTokensBetweenChildren(start: number, end: number, children: (t.Node | null)[], ...args: any[]): BabelToken[] {
         let suppressWarning = false;
         let predicate: BabelTokenFilterPredicate | undefined = undefined;
         let limit: number = Number.MAX_SAFE_INTEGER;
@@ -227,8 +227,9 @@ export class BabelSource extends Source<BabelSourceLang> {
             suppressWarning = args[2];
         }
 
-        if (!suppressWarning && children[children.length - 1] && end === children[children.length - 1].end) {
-            // `children[children.length-1]` truthy test is so we don't get errors like "Cannot read property 'end' of undefined"
+        const lastChild = children[children.length - 1];
+        if (!suppressWarning && lastChild !== null && end === lastChild.end) {
+            // `children[children.length-1]`  truthy test is so we don't get errors like "Cannot read property 'end' of undefined"
             // which can occur when there are no children and/or when the child is null (eg: array literal with holes `[ , , , ]`)
             this.warn('Is a hanging comma being neglected?', {
                 start, end, children

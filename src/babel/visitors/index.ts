@@ -6,9 +6,11 @@ import miscVisitors from './misc';
 import identifierVisitors from './identifiers';
 import objectVisitors from './objects';
 import expressionVisitors from './expressions';
+import arrayVisitors from './array';
 
 export function createVisitors(this: BabelSource): TraverseOptions {
     return [
+        arrayVisitors,
         primitiveVisitors,
         expressionVisitors,
         operatorVisitors,
