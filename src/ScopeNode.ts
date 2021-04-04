@@ -646,11 +646,16 @@ export class ScopeNode implements Ranged {
 
     }
 
-    serialize(): SerializedScopeNode {
+    serialize(): SerializedScopeNode;
+    serialize(maxDepth: number): SerializedScopeNode;
+    serialize(maxDepth: number = -1): SerializedScopeNode {
         if (this.isTerminal) return [this.kind, this.text];
         else return [
             this.kind,
-            this.children.map(child => child.serialize())
+            ((maxDepth === 0)
+                ? '... omitted ...'
+                : this.children.map(child => child.serialize(maxDepth - 1))
+            )
         ];
     }
 }
