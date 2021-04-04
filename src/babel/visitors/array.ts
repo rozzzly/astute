@@ -4,21 +4,18 @@ import { TraverseOptions } from '@babel/traverse';
 import BabelSource from '../BabelSource';
 import { castAsRanged } from '../../utils';
 import { oneLine } from 'common-tags';
-import { findTokenPairs } from '../helpers';
+import { consumeLeadingWhitespace, findTokenPairs } from '../helpers';
+import Source from '../../Source';
 
-const foo = [3, 5];
-console.log('foo', [ ]);
-let i = 0;
-for ( [0]; i < 5; i++) {
-    i--;
-}
+
 
 export default function arrayVisitors(this: BabelSource): TraverseOptions {
     return {
         ArrayExpression: path => {
             const { node, parent } = castAsRanged(path);
 
-            const literal = this.sliceAndBranch(node);
+            const start = consumeLeadingWhitespace(this, path);
+            const literal = this.sliceAndBranch(start, node.end);
             literal.kind = 'meta.array.literal';
 
             const pairs = findTokenPairs(this, path, bToken => bToken.type.label === '[', bToken => bToken.type.label === ']');

@@ -68,6 +68,29 @@ export function handlePossibleTerminator(src: BabelSource, path: NodePath): numb
 }
 
 
+const leadingWhitespaceRegExp = /(\s*)$/;
+
+export function consumeLeadingWhitespace(src: BabelSource, start: number): number;
+export function consumeLeadingWhitespace<T extends t.Node>(src: BabelSource, path: NodePath<T>): number;
+export function consumeLeadingWhitespace(src: BabelSource, offsetOrPath: number | NodePath<t.Node>): number {
+    let start = 0;
+    if (typeof offsetOrPath === 'number') start = offsetOrPath;
+    else {
+        const { node } = castAsRanged(offsetOrPath);
+        start = node.start;
+    }
+    // if lastLineBreak === -1, the +1 will set it to zero
+    // otherwise it advances the index one char to exclude the \n
+    const lastLineBreak = src.text.lastIndexOf('\n', start) + 1;
+    // get text from beginning of line until startOffset
+    const leadingText = src.text.slice(lastLineBreak, start);
+    // extract whitespace from the leading text
+    const match = leadingWhitespaceRegExp.exec(leadingText);
+    if (match) return start - match[1].length;
+    else return start;
+}
+
+
 /**
  * tmlanguage considers the `export` keyword to be a child of exported item's declaration body
  * For example, given:
